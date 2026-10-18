@@ -1,0 +1,17 @@
+# DSH bundle: expose the local Seraphine MCP server.
+# The MCP process is started from the published npm package at the exact
+# version below, so this patch contains no machine-specific absolute paths.
+- insert:
+    - id: seraphine-mcp
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: seraphine
+        transport: stdio
+        command: npx
+        args:
+          - '-y'
+          - '-p'
+          - 'seraphine-group-digest@0.1.0'
+          - 'seraphine-mcp'
+        toolCallTimeoutMs: 30000
+        failOnStartupError: false

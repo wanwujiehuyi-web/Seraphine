@@ -48,7 +48,25 @@
 
 > 正常点 QQ 图标启动会丢失无障碍模式；下次用启动器即可。
 
+### 作为 DSH 插件安装（npm）
+
+```powershell
+# 1. 把 bundle 装进一个 DSH profile（首次会创建 MCP 配置）
+npx -p @deepseek-ai/dsh dsh plugin --profile web add seraphine-group-digest@0.1.0
+
+# 2. 重启 DSH 后，MCP 工具以 mcp__seraphine__* 出现
+```
+
+bundle 通过 `cordis.patch.yml` 注册 `@deepseek-ai/dsh-mcp-client`，不写死本机路径。首次启动 MCP 时若没有配置，会自动在 `%USERPROFILE%\.seraphine\config.json` 初始化一份；本机开发仍优先包根 `config.json`。
+
+也可以单独运行 CLI：
+
+```powershell
+npx -y -p seraphine-group-digest@0.1.0 seraphine status
+```
+
 ---
+
 
 ## 3. 微信后台巡检
 

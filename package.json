@@ -1,10 +1,49 @@
 {
-  "name": "group-digest",
+  "name": "seraphine-group-digest",
   "version": "0.1.0",
-  "private": true,
-  "description": "萨勒芬妮：采集 QQ/微信群消息，跟踪重点用户，生成摘要汇报（人工审核后外发）与日程表；通过 MCP + DSH 插件接入 DeepSeek Harness。",
+  "private": false,
+  "description": "Seraphine: local QQ/WeChat group intelligence for DeepSeek Harness — collect messages, track key members, generate human-approved reports, extract schedules. MCP server + DSH bundle.",
   "type": "module",
   "main": "src/hub.js",
+  "exports": {
+    ".": "./src/hub.js",
+    "./mcp": "./src/mcp-server.js",
+    "./waker": "./dsh/group-waker.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "seraphine": "src/cli.js",
+    "seraphine-mcp": "src/mcp-server.js"
+  },
+  "files": [
+    "app",
+    "bridges",
+    "config.example.json",
+    "cordis.patch.yml",
+    "dsh",
+    "scripts",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wanwujiehuyi-web/Seraphine.git"
+  },
+  "homepage": "https://github.com/wanwujiehuyi-web/Seraphine",
+  "bugs": {
+    "url": "https://github.com/wanwujiehuyi-web/Seraphine/issues"
+  },
+  "author": "wanwujiehuyi-web",
   "engines": {
     "node": ">=22.5.0"
   },
@@ -28,7 +67,9 @@
     "group-chat",
     "digest",
     "mcp",
-    "dsh"
+    "dsh",
+    "dsh-bundle",
+    "seraphine"
   ],
   "license": "MIT"
 }

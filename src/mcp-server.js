@@ -6,9 +6,12 @@
  * stdout 只能出现 JSON-RPC 消息，日志一律走 stderr。
  */
 
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import readline from 'node:readline';
 
-import { createLogger, defaultConfigPath, ensureDirs, loadConfig, resolvePaths } from './config.js';
+import { createLogger, defaultConfigPath, ensureDirs, initConfig, loadConfig, resolvePaths } from './config.js';
 import { GroupDigestService } from './service.js';
 import { Store } from './store.js';
 
@@ -27,12 +30,22 @@ const RPC = {
 
 const writeStderr = (line) => process.stderr.write(`[group-digest-mcp] ${line}\n`);
 
-const configPath = defaultConfigPath();
-const { config, exists } = loadConfig(configPath);
-if (!exists) {
-  writeStderr(`找不到配置文件 ${configPath}。先运行：node src/cli.js init`);
+let configPath = defaultConfigPath();
+let loaded = loadConfig(configPath);
+if (!loaded.exists) {
+  // npm 全局安装时包目录通常只读，配置落到用户目录；本机开发仍优先包根 config.json。
+  if (!process.env.GROUPDIGEST_CONFIG) {
+    const userConfig = path.join(os.homedir(), '.seraphine', 'config.json');
+    if (!fs.existsSync(userConfig)) initConfig(userConfig);
+    configPath = userConfig;
+    loaded = loadConfig(configPath);
+  }
+}
+if (!loaded.exists) {
+  writeStderr(`找不到配置文件 ${configPath}。先运行：seraphine init`);
   process.exit(1);
 }
+const config = loaded.config;
 const paths = resolvePaths(config, configPath);
 ensureDirs(paths);
 const log = createLogger({ level: config.logging.level, file: paths.logs });
