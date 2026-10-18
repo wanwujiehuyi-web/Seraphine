@@ -258,6 +258,7 @@ export class Store {
     q,
     limit = 100,
     offset = 0,
+    order = 'asc',
   } = {}) {
     const where = [];
     const params = [];
@@ -292,7 +293,7 @@ export class Store {
     const sql = `
       SELECT * FROM messages
       ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
-      ORDER BY ts ASC
+      ORDER BY ts ${order === 'desc' ? 'DESC' : 'ASC'}
       LIMIT ? OFFSET ?
     `;
     const rows = this.#db.prepare(sql).all(...params, Math.min(Math.max(limit, 1), 1000), Math.max(offset, 0));

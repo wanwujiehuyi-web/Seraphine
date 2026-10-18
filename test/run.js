@@ -644,7 +644,7 @@ await test('HTTP：Webhook 规范化（微信字段）', async () => {
 await test('调度器：到点生成待审报告且幂等', async () => {
   const dir = tempDir();
   const local = openService(dir, {
-    digest: { ...DEFAULT_CONFIG.digest, slots: ['09:00'], catchUpHours: 6, lookbackHours: 24 },
+    digest: { ...DEFAULT_CONFIG.digest, slots: ['09:00'], catchUpHours: 24, lookbackHours: 24 },
   });
   const now = Date.now();
   seed(local.store, local.config, now);

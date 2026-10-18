@@ -500,14 +500,15 @@ export class GroupDigestService {
     const messages = this.#store.queryMessages({
       since: range.since,
       until: range.until,
-      limit: 500,
+      limit: 1000,
+      order: 'desc',
       chatType: this.#config.watch.includePrivate ? undefined : 'group',
-    });
+    }).reverse();
     const filtered = (Array.isArray(chatIds) && chatIds.length
       ? messages.filter((m) => chatIds.map(String).includes(m.chatId))
       : messages)
       .filter((m) => !isWechatNoise(m));
-    const events = extractEvents(
+    const extracted = extractEvents(
       filtered.map((m) => ({
         ...m,
         senderName: m.senderName,
@@ -521,6 +522,16 @@ export class GroupDigestService {
         minConfidence: this.#config.schedule.minConfidence,
       },
     );
+    // QQ UIA 的会话名会随群改名变化，同一句“明天开会”可能以多个 chatId 入库；
+    // 展示/落库前按时间、事项、类型、发送者做一次语义去重。
+    const events = [];
+    const seenEvents = new Set();
+    for (const event of extracted) {
+      const key = [event.startAt, event.title, event.kind ?? '', event.sourceSender ?? ''].join('|');
+      if (seenEvents.has(key)) continue;
+      seenEvents.add(key);
+      events.push(event);
+    }
     if (persist) persistEvents(this.#store, events);
     return {
       since: range.since,
