@@ -11,7 +11,7 @@ import path from 'node:path';
 
 import { buildDigest, defaultPeriod, digestToSummaryText, renderReport } from './digest.js';
 import { deliverReport } from './delivery.js';
-import { extractEvents, exportCsv, exportIcs, eventsToMarkdown, persistEvents } from './schedule.js';
+import { eventSemanticKey, extractEvents, exportCsv, exportIcs, eventsToMarkdown, persistEvents } from './schedule.js';
 import {
   formatDate,
   formatDateTime,
@@ -527,7 +527,7 @@ export class GroupDigestService {
     const events = [];
     const seenEvents = new Set();
     for (const event of extracted) {
-      const key = [event.startAt, event.title, event.kind ?? '', event.sourceSender ?? ''].join('|');
+      const key = eventSemanticKey(event);
       if (seenEvents.has(key)) continue;
       seenEvents.add(key);
       events.push(event);

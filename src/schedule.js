@@ -774,3 +774,14 @@ export function eventsToText(events, { offsetMinutes = 480 } = {}) {
 }
 
 export { atLocalTime, formatClock };
+
+/** 同一场会议常因群改名/OCR 多个 chatId 出现；用语义键做展示与落库去重。 */
+export function eventSemanticKey(event) {
+  const title = String(event.title ?? '')
+    .replace(/^群主\s*/, '')
+    .replace(/^(?:明天|今天|后天|大后天|周[一二三四五六日天])?/, '')
+    .replace(/^(?:早上|上午|中午|下午|晚上|凌晨)?[0-9一二三四五六七八九十]+点(?:半|整)?/, '')
+    .replace(/\s+/g, '')
+    .trim();
+  return [event.startAt, event.kind ?? '', event.sourceSender ?? '', title, event.location ?? ''].join('|');
+}

@@ -7,7 +7,7 @@
  * 结果之上改写报告；事实来源仍然是这里。
  */
 
-import { extractEvents, eventsToMarkdown, kindLabel } from './schedule.js';
+import { eventSemanticKey, extractEvents, eventsToMarkdown, kindLabel } from './schedule.js';
 import {
   clamp,
   extractUrls,
@@ -336,8 +336,14 @@ export function buildDigest({ store, config, since, until, chatIds = null, nowMs
   const dedupedLinks = uniqBy(links, (link) => link.url).slice(0, 20);
 
   // ---- 日程 ----
+  const eventMessages = messages.filter((m) => {
+    if (m.platform !== 'wechat') return true;
+    const text = String(m.text ?? '');
+    // 微信 OCR 会把“接龙 + 21:09”这类列表误读成日程，先排除。
+    return !(/接龙/.test(text) && /\d{1,2}\s*[:：]\s*\d{2}/.test(text));
+  });
   const extracted = extractEvents(
-    messages.map((m) => ({
+    eventMessages.map((m) => ({
       ...m,
       platform: m.platform,
       chatId: m.chatId,
@@ -361,7 +367,7 @@ export function buildDigest({ store, config, since, until, chatIds = null, nowMs
   });
   const events = uniqBy(
     [...extracted, ...upcomingStored].filter((e) => e.confidence >= 0.45),
-    (e) => e.dedupeKey,
+    eventSemanticKey,
   )
     .sort((a, b) => a.startAt.localeCompare(b.startAt))
     .slice(0, 50);
