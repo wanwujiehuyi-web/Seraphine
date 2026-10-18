@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b0a26"/>
+      <stop offset="0.45" stop-color="#2a0f3d"/>
+      <stop offset="1" stop-color="#0b0412"/>
+    </linearGradient>
+    <radialGradient id="pink" cx="0.78" cy="0.12" r="0.58">
+      <stop offset="0" stop-color="#ff6fbe" stop-opacity="0.55"/>
+      <stop offset="0.5" stop-color="#ff6fbe" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#ff6fbe" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="violet" cx="0.12" cy="0.05" r="0.55">
+      <stop offset="0" stop-color="#8a5cff" stop-opacity="0.45"/>
+      <stop offset="0.55" stop-color="#8a5cff" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#8a5cff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="floor" cx="0.5" cy="1" r="0.6">
+      <stop offset="0" stop-color="#ff6fbe" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#ff6fbe" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd8f0" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#ffd8f0" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <rect width="1600" height="1000" fill="url(#violet)"/>
+  <rect width="1600" height="1000" fill="url(#pink)"/>
+  <rect width="1600" height="1000" fill="url(#floor)"/>
+
+  <g opacity="0.5" filter="url(#soft)">
+    <ellipse cx="1260" cy="140" rx="260" ry="150" fill="#ff6fbe" opacity="0.18"/>
+    <ellipse cx="260" cy="90" rx="220" ry="130" fill="#8a5cff" opacity="0.18"/>
+  </g>
+
+  <g fill="url(#beam)" opacity="0.55">
+    <polygon points="1180,0 1300,0 1080,1000 900,1000"/>
+    <polygon points="1320,0 1390,0 1260,1000 1150,1000"/>
+    <polygon points="210,0 290,0 430,1000 280,1000"/>
+  </g>
+
+  <g fill="#ffe3f6" opacity="0.55">
+    <circle cx="150" cy="160" r="2.2"/><circle cx="315" cy="270" r="1.5"/>
+    <circle cx="520" cy="120" r="2"/><circle cx="690" cy="245" r="1.4"/>
+    <circle cx="905" cy="90" r="2.4"/><circle cx="1080" cy="210" r="1.6"/>
+    <circle cx="1370" cy="120" r="2"/><circle cx="1480" cy="300" r="1.5"/>
+    <circle cx="1240" cy="420" r="1.6"/><circle cx="400" cy="420" r="1.8"/>
+    <circle cx="80" cy="600" r="1.4"/><circle cx="1540" cy="620" r="1.6"/>
+  </g>
+
+  <g stroke="#ffc7e8" stroke-width="2" fill="none" opacity="0.22">
+    <path d="M0 690 C 220 620, 430 760, 650 690 S 1090 610, 1320 700 S 1520 650, 1600 680"/>
+    <path d="M0 760 C 240 700, 470 820, 700 760 S 1120 690, 1360 770"/>
+  </g>
+
+  <g fill="#ffd7ef" opacity="0.20">
+    <g transform="translate(180 690) rotate(-12)">
+      <ellipse cx="0" cy="26" rx="13" ry="9"/>
+      <rect x="10" y="-38" width="4" height="64" rx="2"/>
+      <path d="M14 -38 q 28 6 28 26 l 0 10 l -24 -8 z"/>
+    </g>
+    <g transform="translate(1330 560) rotate(10)">
+      <ellipse cx="0" cy="26" rx="13" ry="9"/>
+      <rect x="10" y="-38" width="4" height="64" rx="2"/>
+      <path d="M14 -38 q 28 6 28 26 l 0 10 l -24 -8 z"/>
+    </g>
+  </g>
+
+  <g fill="#ff9ed6" opacity="0.10">
+    <path d="M760 0 L 810 0 L 700 1000 L 640 1000 Z"/>
+    <path d="M460 0 L 490 0 L 590 1000 L 540 1000 Z"/>
+  </g>
+</svg>

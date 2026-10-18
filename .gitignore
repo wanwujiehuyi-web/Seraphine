@@ -1,0 +1,14 @@
+# 本机配置与运行状态
+config.json
+state/
+
+# 演示库也属于本地状态
+state/demo/
+
+# 日志
+*.log
+
+# 编辑器/系统
+.vscode/
+.DS_Store
+Thumbs.db

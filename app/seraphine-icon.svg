@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3a1352"/>
+      <stop offset="0.55" stop-color="#8c2f8f"/>
+      <stop offset="1" stop-color="#ff79c8"/>
+    </linearGradient>
+    <linearGradient id="hair" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffb6df"/>
+      <stop offset="0.55" stop-color="#ff79c8"/>
+      <stop offset="1" stop-color="#c33fa8"/>
+    </linearGradient>
+    <linearGradient id="skirt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9b5cff"/>
+      <stop offset="1" stop-color="#5b23b8"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe79a"/>
+      <stop offset="1" stop-color="#f3b53c"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.35" r="0.6">
+      <stop offset="0" stop-color="#ffd6f0" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ffd6f0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="256" height="256" fill="url(#bg)"/>
+  <circle cx="128" cy="100" r="96" fill="url(#glow)"/>
+  <circle cx="34" cy="42" r="3" fill="#ffe0f4" opacity="0.8"/>
+  <circle cx="218" cy="52" r="2.4" fill="#ffe0f4" opacity="0.75"/>
+  <circle cx="224" cy="196" r="2" fill="#ffe0f4" opacity="0.6"/>
+  <circle cx="26" cy="206" r="2.2" fill="#ffe0f4" opacity="0.6"/>
+
+  <!-- 长发外轮廓 -->
+  <path d="M128 36c-58 0-84 40-82 96 1 33-9 64-24 90 38 10 68-8 78-44 4 30 14 50 28 58 14-8 24-28 28-58 10 36 40 54 78 44-15-26-25-57-24-90 2-56-24-96-82-96z"
+        fill="url(#hair)" stroke="#4a103e" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M58 118c-6 36-16 58-30 78 22 0 40-14 50-38" fill="none" stroke="#ffc4e4" stroke-width="4" opacity="0.75"/>
+  <path d="M198 118c6 36 16 58 30 78-22 0-40-14-50-38" fill="none" stroke="#ffc4e4" stroke-width="4" opacity="0.75"/>
+
+  <!-- 身体 / 演出服 -->
+  <path d="M92 190c10-8 24-12 36-12s26 4 36 12l10 44H82z" fill="#fff6fd" stroke="#4a103e" stroke-width="5"/>
+  <path d="M88 206h80l10 28H78z" fill="url(#skirt)" stroke="#4a103e" stroke-width="5"/>
+  <rect x="98" y="205" width="60" height="9" rx="4" fill="url(#gold)" stroke="#4a103e" stroke-width="3"/>
+  <path d="M128 178l-8 12 8 8 8-8z" fill="url(#gold)" stroke="#4a103e" stroke-width="3"/>
+
+  <!-- 脸 -->
+  <ellipse cx="128" cy="112" rx="50" ry="54" fill="#ffe6da" stroke="#4a103e" stroke-width="5"/>
+
+  <!-- 刘海 -->
+  <path d="M78 118c-3-46 18-70 50-70s53 24 50 70c-10-18-16-26-22-38l-8 34-12-38-10 40-12-38-12 38-10-34-8 36c-6-12-12-22-16-30z"
+        fill="url(#hair)" stroke="#4a103e" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- 耳朵 -->
+  <ellipse cx="78" cy="122" rx="8" ry="13" fill="#ffe6da" stroke="#4a103e" stroke-width="3"/>
+  <ellipse cx="178" cy="122" rx="8" ry="13" fill="#ffe6da" stroke="#4a103e" stroke-width="3"/>
+
+  <!-- 眼睛 -->
+  <path d="M94 112c5-12 22-14 29-2 2 4 1 16-7 21-10 6-23-4-22-19z" fill="#fff" stroke="#4a103e" stroke-width="4"/>
+  <path d="M162 112c-5-12-22-14-29-2-2 4-1 16 7 21 10 6 23-4 22-19z" fill="#fff" stroke="#4a103e" stroke-width="4"/>
+  <circle cx="110" cy="120" r="9" fill="#2f9fff"/>
+  <circle cx="146" cy="120" r="9" fill="#2f9fff"/>
+  <circle cx="112" cy="120" r="4.5" fill="#1b1b3a"/>
+  <circle cx="148" cy="120" r="4.5" fill="#1b1b3a"/>
+  <circle cx="113" cy="117" r="2.6" fill="#fff"/>
+  <circle cx="149" cy="117" r="2.6" fill="#fff"/>
+  <path d="M92 104c8-8 18-9 27-5" fill="none" stroke="#4a103e" stroke-width="3" stroke-linecap="round"/>
+  <path d="M164 104c-8-8-18-9-27-5" fill="none" stroke="#4a103e" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- 腮红 / 嘴 -->
+  <ellipse cx="96" cy="140" rx="11" ry="6" fill="#ff8fbe" opacity="0.65"/>
+  <ellipse cx="160" cy="140" rx="11" ry="6" fill="#ff8fbe" opacity="0.65"/>
+  <path d="M120 142c4 6 12 6 16 0" fill="none" stroke="#b33268" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- 星形麦克风 -->
+  <path d="M176 206l-9-48" stroke="#4a103e" stroke-width="10" stroke-linecap="round"/>
+  <path d="M176 206l-9-48" stroke="url(#gold)" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="166" cy="152" r="14" fill="#ffe6da" stroke="#4a103e" stroke-width="4"/>
+  <g transform="translate(194 126)">
+    <path d="M0-22l6 15 17 2-13 11 4 17-14-9-14 9 4-17-13-11 17-2z" fill="url(#gold)" stroke="#4a103e" stroke-width="4" stroke-linejoin="round"/>
+    <circle cx="0" cy="0" r="5" fill="#ff79c8" stroke="#4a103e" stroke-width="2"/>
+  </g>
+
+  <!-- 星星发饰 -->
+  <g transform="translate(182 68) scale(0.7)">
+    <path d="M0-18l5 12 13 1-10 9 3 13-11-7-11 7 3-13-10-9 13-1z" fill="url(#gold)" stroke="#4a103e" stroke-width="4"/>
+  </g>
+
+  <!-- 音符 -->
+  <g stroke="#ffe6f8" stroke-width="4" stroke-linecap="round" opacity="0.9">
+    <path d="M32 46v-18l16-4v18"/>
+    <ellipse cx="28" cy="48" rx="6" ry="4" fill="#ffe6f8" stroke="none"/>
+    <ellipse cx="44" cy="44" rx="6" ry="4" fill="#ffe6f8" stroke="none"/>
+    <path d="M222 210v-18l-14-4v18"/>
+    <ellipse cx="208" cy="210" rx="6" ry="4" fill="#ffe6f8" stroke="none"/>
+    <ellipse cx="224" cy="206" rx="6" ry="4" fill="#ffe6f8" stroke="none"/>
+  </g>
+</svg>

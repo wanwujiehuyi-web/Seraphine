@@ -1,0 +1,1266 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>萨勒芬妮</title>
+<link rel="icon" href="/app/seraphine-final.png">
+<script>try{const t=localStorage.getItem('gd_theme');if(t!=='default')document.documentElement.dataset.theme='seraphine'}catch(e){}</script>
+<style>
+  :root{
+    color-scheme: dark;
+    --bg:#0c0f14; --panel:#121722; --panel2:#161c29; --line:#232b3a;
+    --text:#e8ebf2; --muted:#8f9bb0; --accent:#4b8dff; --accent2:#7aa8ff;
+    --ok:#5ee0a0; --warn:#ffd479; --bad:#ff8f9f; --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:radial-gradient(1200px 700px at 20% -10%,#16233c 0%,var(--bg) 55%);
+    color:var(--text);font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+    overflow:hidden;
+  }
+  button,input,select,textarea{font:inherit;color:inherit}
+  button{cursor:pointer}
+  .app{display:flex;height:100vh}
+  /* sidebar */
+  .sidebar{
+    width:224px;flex:0 0 224px;background:rgba(13,17,24,.9);border-right:1px solid var(--line);
+    display:flex;flex-direction:column;padding:18px 14px;backdrop-filter:blur(12px);
+  }
+  .brand{display:flex;align-items:center;gap:10px;padding:4px 6px 18px}
+  .brand img{width:46px;height:46px;border-radius:12px;box-shadow:0 6px 18px rgba(47,111,235,.35)}
+  .brand b{font-size:16px;letter-spacing:.3px}
+  .brand small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
+  nav{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+  .nav-item{
+    display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:0;
+    background:transparent;color:var(--muted);text-align:left;font-size:14px;
+  }
+  .nav-item .ico{width:20px;text-align:center;font-size:16px}
+  .nav-item:hover{background:#18202e;color:var(--text)}
+  .nav-item.active{background:linear-gradient(90deg,rgba(75,141,255,.22),rgba(75,141,255,.06));color:#fff;box-shadow:inset 2px 0 0 var(--accent)}
+  .side-foot{margin-top:auto;padding:12px 8px 4px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px;box-shadow:0 0 10px var(--ok)}
+  .dot.bad{background:var(--bad);box-shadow:0 0 10px var(--bad)}
+  /* main */
+  main{flex:1;min-width:0;display:flex;flex-direction:column}
+  header{
+    height:66px;flex:0 0 66px;display:flex;align-items:center;gap:12px;padding:0 24px;
+    border-bottom:1px solid var(--line);background:rgba(12,15,20,.55);backdrop-filter:blur(8px);
+  }
+  header h1{font-size:17px;margin:0;flex:1;font-weight:600}
+  .pill{padding:5px 10px;border-radius:999px;background:#1a2232;border:1px solid var(--line);color:var(--muted);font-size:12px}
+  .content{flex:1;overflow-y:auto;overflow-x:hidden;padding:24px}
+  .page{display:none;max-width:1180px;margin:0 auto}
+  .page.active{display:block;animation:fade .18s ease}
+  @keyframes fade{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+  h2{font-size:17px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:12px;margin-bottom:16px}
+  /* cards */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+  .card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:var(--radius);padding:15px 16px;min-width:0}
+  .card .k{color:var(--muted);font-size:12px}
+  .card .v{font-size:26px;font-weight:700;margin-top:4px;letter-spacing:.5px}
+  .card .v.ok{color:var(--ok)}.card .v.bad{color:var(--bad)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .btn{padding:9px 14px;border-radius:10px;border:1px solid #33405a;background:#1b2434;color:var(--text)}
+  .btn:hover{background:#22304a;border-color:#40527a}
+  .btn.primary{background:linear-gradient(180deg,#4b8dff,#2f6feb);border-color:#2f6feb;color:#fff}
+  .btn.primary:hover{filter:brightness(1.07)}
+  .btn.danger{background:#2a1a22;border-color:#5a2b38;color:#ffb3c0}
+  .btn.small{padding:5px 10px;border-radius:8px;font-size:12px}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+  .subpanel{background:rgba(0,0,0,.14)}
+  .panel + .panel{margin-top:14px}
+  .panel h3{font-size:14px;margin:0 0 12px}
+  table{width:100%;border-collapse:collapse;table-layout:fixed}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid #1f2634;vertical-align:middle;overflow-wrap:anywhere}
+  th:last-child,td:last-child{white-space:normal}
+  th{color:var(--muted);font-size:12px;font-weight:500}
+  tr:last-child td{border-bottom:0}
+  td.muted,.muted{color:var(--muted)}
+  .ellipsis{max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .badge{padding:3px 8px;border-radius:999px;font-size:11px;background:#1d2637;border:1px solid var(--line);color:var(--muted)}
+  .badge.pending{color:var(--warn);border-color:#5a4a1e;background:#2a2314}
+  .badge.sent{color:var(--ok);border-color:#1d5138;background:#12281d}
+  .badge.rejected{color:var(--bad);border-color:#5a2b38;background:#2a1a22}
+  .badge.approved{color:var(--accent2);border-color:#2c4a7a;background:#14213a}
+  .split{display:grid;grid-template-columns:300px 1fr;gap:14px;min-height:520px}
+  .list{max-height:620px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+  .list-item{padding:11px 12px;border-bottom:1px solid #1d2432;cursor:pointer;display:flex;gap:10px;align-items:center}
+  .list-item:hover{background:#18202e}
+  .list-item.active{background:#1b2a45;box-shadow:inset 3px 0 0 var(--accent)}
+  .list-item .name{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .list-item .meta{font-size:11px;color:var(--muted)}
+  .unread{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:10px;background:var(--bad);color:#2a1116;font-weight:700;font-size:11px;padding:0 6px}
+  .msg{padding:8px 0;border-bottom:1px dashed #1f2634}
+  .msg:last-child{border-bottom:0}
+  .msg .who{font-size:12px;color:var(--accent2);margin-right:8px}
+  .msg .when{font-size:11px;color:var(--muted);float:right}
+  .msg .txt{margin-top:2px;white-space:pre-wrap;word-break:break-word}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;background:#1b2434;border:1px solid var(--line);font-size:12px}
+  .chip button{border:0;background:transparent;color:var(--muted);padding:0;font-size:13px}
+  .chip button:hover{color:var(--bad)}
+  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+  .field label{font-size:12px;color:var(--muted)}
+  input[type=text],input[type=number],select,textarea{
+    background:#0f141d;border:1px solid #2a3446;border-radius:9px;padding:9px 11px;outline:none;color:var(--text)
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+  .check{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .empty{padding:30px;text-align:center;color:var(--muted)}
+  /* toast */
+  #toast{position:fixed;right:22px;bottom:22px;display:flex;flex-direction:column;gap:8px;z-index:50}
+  .toast{background:#1b2434;border:1px solid #33405a;border-radius:10px;padding:10px 14px;box-shadow:0 10px 30px rgba(0,0,0,.4);font-size:13px;max-width:360px}
+  .toast.err{border-color:#5a2b38;color:#ffb3c0}
+  /* modal */
+  #modal{position:fixed;inset:0;background:rgba(4,7,12,.68);display:none;align-items:center;justify-content:center;padding:24px;z-index:40}
+  #modal.open{display:flex}
+  .modal-box{width:min(860px,100%);max-height:86vh;display:flex;flex-direction:column;background:#111722;border:1px solid #2a3446;border-radius:16px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  .modal-head{display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--line)}
+  .modal-head h3{margin:0;font-size:15px;flex:1}
+  .modal-body{padding:18px;overflow:auto}
+  .modal-body pre{white-space:pre-wrap;word-break:break-word;font:13px/1.6 "Cascadia Mono",Consolas,monospace;margin:0;color:#cfd6e4}
+  .toast b{color:#fff}
+  @media(max-width:900px){
+    .sidebar{width:70px;flex-basis:70px;padding:14px 8px}
+    .brand div,.nav-item span:not(.ico),.side-foot{display:none}
+    .brand{justify-content:center;padding-bottom:12px}
+    .nav-item{justify-content:center;padding:12px 0}
+    .split{grid-template-columns:1fr}
+    .grid2{grid-template-columns:1fr}
+  }
+  @media(max-width:1180px){
+    .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media(max-width:680px){
+    .cards{grid-template-columns:1fr}
+  }
+
+  /* ---------------------------------------------------- Seraphine 主题 */
+  html[data-theme="seraphine"]{
+    --bg:#2a1238; --panel:rgba(68,26,92,.72); --panel2:rgba(108,44,138,.60);
+    --line:rgba(255,190,235,.38);
+    --text:#fff9fe; --muted:#f3cfea; --accent:#ff7cc8; --accent2:#d9b6ff;
+    --ok:#8df5d8; --warn:#ffd98a; --bad:#ff9fc4;
+  }
+  html[data-theme="seraphine"] body{
+    background-color:#2a1238;
+    background-image:url('/app/seraphine-bg.svg');
+    background-size:cover;
+    background-position:72% 42%;
+    background-attachment:fixed;
+  }
+  html[data-theme="seraphine"] body::before{
+    content:"♪    ✦    ♫    ✧    ♪";
+    position:fixed;left:0;right:0;top:0;z-index:0;pointer-events:none;
+    padding:14px 0 0 34px;white-space:nowrap;overflow:hidden;
+    font-size:30px;letter-spacing:46px;color:rgba(255,215,242,.18);
+    text-shadow:0 0 18px rgba(255,111,190,.45);
+  }
+  html[data-theme="seraphine"] .app{position:relative;z-index:1}
+  html[data-theme="seraphine"] .sidebar{
+    background:rgba(34,5,48,.30);
+    border-right-color:var(--line);
+  }
+  html[data-theme="seraphine"] .brand img{box-shadow:0 8px 26px rgba(255,111,190,.55)}
+  html[data-theme="seraphine"] header{
+    background:rgba(26,6,38,.20);
+    border-bottom-color:var(--line);
+  }
+  html[data-theme="seraphine"] .nav-item{color:#f0c9e9}
+  html[data-theme="seraphine"] .nav-item:hover{background:rgba(255,255,255,.10);color:#fff}
+  html[data-theme="seraphine"] .nav-item.active{
+    background:linear-gradient(90deg,rgba(255,124,200,.38),rgba(217,182,255,.10));
+    color:#fff;box-shadow:inset 3px 0 0 var(--accent),0 0 26px rgba(255,124,200,.18);
+  }
+  html[data-theme="seraphine"] .pill{background:rgba(255,255,255,.10);border-color:var(--line);color:#ffe7f8}
+  html[data-theme="seraphine"] .btn{
+    background:rgba(255,255,255,.10);border-color:rgba(255,190,235,.38);color:#fff7fd;
+  }
+  html[data-theme="seraphine"] .btn:hover{background:rgba(255,255,255,.18);border-color:rgba(255,190,235,.62)}
+  html[data-theme="seraphine"] .btn.primary{
+    background:linear-gradient(180deg,#ff9ad4,#f25ab4 55%,#c56bff);
+    border-color:#ffc1e5;color:#2a0620;font-weight:800;
+    box-shadow:0 8px 26px rgba(255,90,180,.30);
+  }
+  html[data-theme="seraphine"] .btn.danger{background:rgba(255,90,130,.16);border-color:rgba(255,150,180,.42);color:#ffc4d8}
+  html[data-theme="seraphine"] .card{
+    background:rgba(42,4,52,.30);
+    border-color:rgba(255,225,248,.48);
+    box-shadow:0 10px 30px rgba(20,4,30,.20), inset 0 1px 0 rgba(255,255,255,.28);
+  }
+  html[data-theme="seraphine"] .card .v.ok{color:#b5ffeb}
+  html[data-theme="seraphine"] .card .v.ok{color:#a9ffe9}
+  html[data-theme="seraphine"] .panel{
+    background:rgba(40,3,50,.28);
+    border-color:rgba(255,225,248,.38);
+    box-shadow:0 10px 30px rgba(17,4,28,.16);
+  }
+  html[data-theme="seraphine"] .subpanel{background:rgba(30,2,42,.20)}
+  html[data-theme="seraphine"] .list{
+    background:rgba(40,3,50,.30);
+    border-color:rgba(255,225,248,.38);
+  }
+  html[data-theme="seraphine"] .list-item:hover{background:rgba(255,255,255,.10)}
+  html[data-theme="seraphine"] .list-item.active{background:rgba(255,124,200,.22);box-shadow:inset 3px 0 0 var(--accent)}
+  html[data-theme="seraphine"] input[type=text],
+  html[data-theme="seraphine"] input[type=number],
+  html[data-theme="seraphine"] select,
+  html[data-theme="seraphine"] textarea{
+    background:rgba(34,10,48,.48);border-color:rgba(255,220,245,.42);color:#fff8fe;
+  }
+  html[data-theme="seraphine"] .card,
+  html[data-theme="seraphine"] .panel,
+  html[data-theme="seraphine"] .list,
+  html[data-theme="seraphine"] header,
+  html[data-theme="seraphine"] .sidebar,
+  html[data-theme="seraphine"] th,
+  html[data-theme="seraphine"] td,
+  html[data-theme="seraphine"] .msg{
+    color:#fffaff;
+    text-shadow:
+      0 1px 0 rgba(45,0,34,.95),
+      0 -1px 0 rgba(45,0,34,.85),
+      1px 0 0 rgba(45,0,34,.85),
+      -1px 0 0 rgba(45,0,34,.85),
+      0 4px 12px rgba(40,0,30,.9);
+  }
+  html[data-theme="seraphine"] .card .k,
+  html[data-theme="seraphine"] .muted,
+  html[data-theme="seraphine"] .sub,
+  html[data-theme="seraphine"] th{
+    color:#ffe9fb;
+  }
+  html[data-theme="seraphine"] .card .v{
+    -webkit-text-stroke:1px rgba(45,0,34,.6);
+    paint-order:stroke fill;
+  }
+  html[data-theme="seraphine"] .card .k,
+  html[data-theme="seraphine"] .card .v,
+  html[data-theme="seraphine"] th,
+  html[data-theme="seraphine"] td,
+  html[data-theme="seraphine"] .msg,
+  html[data-theme="seraphine"] .sub,
+  html[data-theme="seraphine"] .muted,
+  html[data-theme="seraphine"] .list-item .name,
+  html[data-theme="seraphine"] .list-item .meta{
+    -webkit-text-stroke:.55px rgba(45,0,34,.9);
+    paint-order:stroke fill;
+  }
+  html[data-theme="seraphine"] .chip{background:rgba(255,255,255,.10);border-color:rgba(255,190,235,.32)}
+  html[data-theme="seraphine"] .chip button{color:#ffc7e9}
+  html[data-theme="seraphine"] th,
+  html[data-theme="seraphine"] td{border-bottom-color:rgba(255,190,235,.18)}
+  html[data-theme="seraphine"] .msg{border-bottom-color:rgba(255,190,235,.18)}
+  html[data-theme="seraphine"] .badge{background:rgba(255,255,255,.10);border-color:rgba(255,190,235,.32);color:#f3cfe9}
+  html[data-theme="seraphine"] .modal-box{background:rgba(40,14,54,.96);border-color:rgba(255,190,235,.36)}
+  html[data-theme="seraphine"] .modal-head{border-bottom-color:rgba(255,190,235,.22)}
+  html[data-theme="seraphine"] .modal-body pre{color:#ffe6f6}
+  html[data-theme="seraphine"] .toast{background:rgba(48,16,64,.94);border-color:rgba(255,190,235,.42);color:#fff}
+  html[data-theme="seraphine"] .msg .who,
+  html[data-theme="seraphine"] .nav-item.active .ico{color:#ffa8da}
+  html[data-theme="seraphine"] .brand b{letter-spacing:.6px}
+  html[data-theme="seraphine"] .brand small{color:#e7b7dd}
+  /* 亮白粉玻璃：不压暗背景，用半透明白玻璃提亮内容区 */
+  html[data-theme="seraphine"]{
+    --bg:#f7e9f5;
+    --panel:rgba(255,246,253,.72); --panel2:rgba(255,240,250,.62);
+    --line:rgba(164,66,134,.28);
+    --text:#3b0b32; --muted:#7a3a66; --accent:#e0449d; --accent2:#7b45c9;
+    --ok:#0b8f6c; --warn:#a35f00; --bad:#c62b64;
+  }
+  html[data-theme="seraphine"] body{
+    color:var(--text);
+    background-image:url('/app/seraphine-bg.svg');
+  }
+  html[data-theme="seraphine"] body::before{color:rgba(160,50,120,.10);text-shadow:0 0 18px rgba(255,255,255,.35)}
+  html[data-theme="seraphine"] .sidebar{
+    background:rgba(255,244,252,.64);
+    border-right-color:var(--line);
+    backdrop-filter:blur(16px) saturate(1.15);
+  }
+  html[data-theme="seraphine"] header{
+    background:rgba(255,246,253,.62);
+    border-bottom-color:var(--line);
+    color:#3b0b32;
+    backdrop-filter:blur(16px) saturate(1.15);
+  }
+  html[data-theme="seraphine"] header h1{color:#3b0b32;font-weight:800}
+  html[data-theme="seraphine"] .brand b{color:#3b0b32}
+  html[data-theme="seraphine"] .brand small{color:#8a4b75}
+  html[data-theme="seraphine"] .nav-item{color:#6b2c59}
+  html[data-theme="seraphine"] .nav-item:hover{background:rgba(255,255,255,.52);color:#3b0b32}
+  html[data-theme="seraphine"] .nav-item.active{
+    background:linear-gradient(90deg,rgba(224,68,157,.20),rgba(255,255,255,.10));
+    color:#3b0b32;box-shadow:inset 3px 0 0 var(--accent),0 0 22px rgba(224,68,157,.12);
+  }
+  html[data-theme="seraphine"] .pill{background:rgba(255,255,255,.56);border-color:var(--line);color:#6b2c59}
+  html[data-theme="seraphine"] .btn{
+    background:rgba(255,255,255,.58);border-color:rgba(170,70,140,.30);color:#4a103c;
+  }
+  html[data-theme="seraphine"] .btn:hover{background:rgba(255,255,255,.78);border-color:rgba(170,70,140,.50)}
+  html[data-theme="seraphine"] .btn.primary{
+    background:linear-gradient(180deg,#ff8ecb,#ed4da9 55%,#b96cff);
+    border-color:#f7a8d8;color:#fff;font-weight:800;
+    box-shadow:0 8px 24px rgba(224,68,157,.22);
+  }
+  html[data-theme="seraphine"] .btn.danger{background:rgba(255,220,232,.72);border-color:rgba(198,43,100,.30);color:#a51d4e}
+  html[data-theme="seraphine"] .card{
+    background:rgba(255,248,253,.78);
+    border-color:rgba(170,70,140,.26);
+    box-shadow:0 12px 30px rgba(110,20,80,.12), inset 0 1px 0 rgba(255,255,255,.85);
+    color:#3b0b32;
+    backdrop-filter:blur(16px) saturate(1.15);
+  }
+  html[data-theme="seraphine"] .card .v{color:#3b0b32}
+  html[data-theme="seraphine"] .card .v.ok{color:#0b8f6c}
+  html[data-theme="seraphine"] .panel{
+    background:rgba(255,247,253,.78);
+    border-color:rgba(170,70,140,.24);
+    box-shadow:0 10px 28px rgba(110,20,80,.10);
+    color:#3b0b32;
+    backdrop-filter:blur(16px) saturate(1.15);
+  }
+  html[data-theme="seraphine"] .subpanel{background:rgba(255,255,255,.38)}
+  html[data-theme="seraphine"] .list{
+    background:rgba(255,247,253,.78);
+    border-color:rgba(170,70,140,.24);
+    backdrop-filter:blur(16px) saturate(1.15);
+  }
+  html[data-theme="seraphine"] .list-item{color:#4a103c}
+  html[data-theme="seraphine"] .list-item:hover{background:rgba(255,255,255,.42)}
+  html[data-theme="seraphine"] .list-item.active{background:rgba(224,68,157,.14);box-shadow:inset 3px 0 0 var(--accent)}
+  html[data-theme="seraphine"] input[type=text],
+  html[data-theme="seraphine"] input[type=number],
+  html[data-theme="seraphine"] select,
+  html[data-theme="seraphine"] textarea{
+    background:rgba(255,255,255,.62);border-color:rgba(170,70,140,.30);color:#3b0b32;
+  }
+  html[data-theme="seraphine"] .chip{background:rgba(255,255,255,.54);border-color:rgba(170,70,140,.24);color:#4a103c}
+  html[data-theme="seraphine"] .chip button{color:#a14a80}
+  html[data-theme="seraphine"] th{color:#7a3a66}
+  html[data-theme="seraphine"] th,
+  html[data-theme="seraphine"] td{border-bottom-color:rgba(170,70,140,.18);color:#3b0b32}
+  html[data-theme="seraphine"] .msg{border-bottom-color:rgba(170,70,140,.18);color:#3b0b32}
+  html[data-theme="seraphine"] .msg .who{color:#b52f7d}
+  html[data-theme="seraphine"] .badge{background:rgba(255,255,255,.54);border-color:rgba(170,70,140,.24);color:#6b2c59}
+  html[data-theme="seraphine"] .modal-box{background:rgba(255,250,254,.96);border-color:rgba(170,70,140,.24)}
+  html[data-theme="seraphine"] .modal-head{border-bottom-color:rgba(170,70,140,.18)}
+  html[data-theme="seraphine"] .modal-body pre{color:#4a103c}
+  html[data-theme="seraphine"] .toast{background:rgba(255,250,254,.96);border-color:rgba(170,70,140,.30);color:#3b0b32}
+  html[data-theme="seraphine"] .muted,
+  html[data-theme="seraphine"] .sub,
+  html[data-theme="seraphine"] .card .k,
+  html[data-theme="seraphine"] .list-item .meta{color:#7a3a66}
+  html[data-theme="seraphine"] .card,
+  html[data-theme="seraphine"] .panel,
+  html[data-theme="seraphine"] .list,
+  html[data-theme="seraphine"] header,
+  html[data-theme="seraphine"] .sidebar,
+  html[data-theme="seraphine"] th,
+  html[data-theme="seraphine"] td,
+  html[data-theme="seraphine"] .msg{
+    text-shadow:none;
+  }
+  html[data-theme="seraphine"] .card .v,
+  html[data-theme="seraphine"] .card .k,
+  html[data-theme="seraphine"] th,
+  html[data-theme="seraphine"] td,
+  html[data-theme="seraphine"] .msg,
+  html[data-theme="seraphine"] .sub,
+  html[data-theme="seraphine"] .muted,
+  html[data-theme="seraphine"] .list-item .name,
+  html[data-theme="seraphine"] .list-item .meta{
+    -webkit-text-stroke:0;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="/app/seraphine-final.png" alt="萨勒芬妮">
+      <div><b>萨勒芬妮</b><small>QQ · 微信 · 本机</small></div>
+    </div>
+    <nav>
+      <button class="nav-item active" data-page="home"><span class="ico">⌂</span><span>概览</span></button>
+      <button class="nav-item" data-page="qq"><span class="ico">Q</span><span>QQ</span></button>
+      <button class="nav-item" data-page="wechat"><span class="ico">微</span><span>微信</span></button>
+      <button class="nav-item" data-page="members"><span class="ico">★</span><span>重点成员</span></button>
+      <button class="nav-item" data-page="reports"><span class="ico">▤</span><span>汇报</span></button>
+      <button class="nav-item" data-page="schedule"><span class="ico">◷</span><span>日程</span></button>
+      <button class="nav-item" data-page="settings"><span class="ico">⚙</span><span>设置</span></button>
+    </nav>
+    <div class="side-foot">
+      <div><span class="dot" id="sideDot"></span><span id="sideState">连接中…</span></div>
+      <div style="margin-top:6px">数据仅在本机</div>
+    </div>
+  </aside>
+
+  <main>
+    <header>
+      <h1 id="title">概览</h1>
+      <span class="pill" id="clock">—</span>
+      <button class="btn small" id="themeToggle">✦ 星籁主题</button>
+      <button class="btn small" id="refresh">刷新</button>
+    </header>
+    <div class="content">
+
+      <section class="page active" id="page-home">
+        <div class="cards">
+          <div class="card"><div class="k">QQ 读取</div><div class="v" id="qqState">—</div></div>
+          <div class="card"><div class="k">会话</div><div class="v" id="statSessions">—</div></div>
+          <div class="card"><div class="k">已采集消息</div><div class="v" id="statMessages">—</div></div>
+          <div class="card"><div class="k">待审报告</div><div class="v" id="statPending">—</div></div>
+          <div class="card"><div class="k">微信监控</div><div class="v" id="wechatState">—</div></div>
+        </div>
+        <div class="panel">
+          <div class="row">
+            <button class="btn primary" id="quickReport">生成今日汇报</button>
+            <button class="btn" id="quickWechat">微信监控</button>
+            <button class="btn" id="quickSettings">读取设置</button>
+            <span class="muted" id="quickMsg"></span>
+          </div>
+          <div class="sub" style="margin:12px 0 0">QQ 会话列表每 5 秒读取一次；打开某个群才能拿到完整消息。</div>
+        </div>
+        <div class="panel">
+          <h3>最近的群 / 会话</h3>
+          <table><thead><tr><th>会话</th><th>最后一条</th><th>未读</th></tr></thead><tbody id="homeSessions"></tbody></table>
+        </div>
+      </section>
+
+      <section class="page" id="page-qq">
+        <div class="sub" style="margin-bottom:12px">本机 QQ 会话；打开群会清除该群未读。自动巡检只读会话列表和当前会话，不抢焦点。</div>
+        <div class="split">
+          <div class="list" id="sessionList"></div>
+          <div>
+            <div class="panel" id="groupPanel">
+              <div class="empty">左侧选择一个群，查看设置与最近消息。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-wechat">
+        <div class="cards">
+          <div class="card"><div class="k">微信读取</div><div class="v" id="wxPageState">—</div></div>
+          <div class="card"><div class="k">监控群</div><div class="v" id="wxPageMonitored">0</div></div>
+          <div class="card"><div class="k">上次巡检</div><div class="v" id="wxPageLast" style="font-size:16px;margin-top:10px">—</div></div>
+        </div>
+        <div class="panel">
+          <h3>微信监控</h3>
+          <div class="sub">后台巡检：不抢焦点、不弹窗。微信可以最小化/收进托盘，巡检时在屏幕外临时渲染，完成后恢复原状；但微信进程必须还在（退出微信则停止）。</div>
+          <div class="grid2">
+            <label class="check"><input type="checkbox" id="wechatEnabled"> 启用自动巡检</label>
+            <div class="field"><label>巡检间隔（秒，最小 30）</label><input type="number" id="wechatInterval" min="30" step="30"></div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="refreshWechat">刷新微信群列表</button>
+            <button class="btn" id="wechatSelectAll">全选</button>
+            <button class="btn" id="wechatClearAll">清空</button>
+            <button class="btn primary" id="saveWechat">保存微信监控</button>
+            <span class="muted" id="wechatMsg">后台读取，不会把微信调到前台。</span>
+          </div>
+          <table style="margin-top:12px"><thead><tr><th>群聊</th><th>最后一条</th><th>时间</th><th>监控</th><th></th></tr></thead><tbody id="wechatRows"><tr><td colspan="5" class="muted">还没有读取列表</td></tr></tbody></table>
+        </div>
+        <div class="panel">
+          <h3>最近收录</h3>
+          <div id="wechatRecent"><div class="empty">还没有收录微信消息。</div></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-members">
+        <div class="panel">
+          <div class="row" style="justify-content:space-between">
+            <div>
+              <h2 style="margin-bottom:2px">重点成员</h2>
+              <div class="sub" style="margin:0">从最近发言的成员里挑人；之后他们的发言会进入「重点用户动态」。</div>
+            </div>
+            <select id="memberGroup" style="min-width:260px"></select>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>搜索重点成员</h3>
+          <div class="row"><input type="text" id="memberSearch" placeholder="输入昵称/备注，跨群搜索成员" style="flex:1"><button class="btn" id="clearMemberSearch">清空</button></div>
+          <table style="margin-top:10px"><thead><tr><th>成员</th><th>群</th><th>消息数</th><th>最后发言</th><th>操作</th></tr></thead><tbody id="memberSearchRows"><tr><td colspan="5" class="muted">输入名字开始搜索。</td></tr></tbody></table>
+        </div>
+
+        <div class="panel">
+          <h3>最近发言的成员</h3>
+          <table><thead><tr><th>成员</th><th>消息数</th><th>最后发言</th><th>关注</th><th>操作</th></tr></thead><tbody id="memberRows"></tbody></table>
+        </div>
+        <div class="panel">
+          <h3>已关注</h3>
+          <table><thead><tr><th>成员</th><th>范围</th><th>优先级</th><th>备注</th><th></th></tr></thead><tbody id="followRows"></tbody></table>
+        </div>
+      </section>
+
+      <section class="page" id="page-reports">
+        <div class="panel">
+          <div class="row">
+            <select id="reportHours"><option value="auto" selected>自上次报告</option><option value="6">最近 6 小时</option><option value="12">最近 12 小时</option><option value="24">最近 24 小时</option><option value="72">最近 72 小时</option></select>
+            <button class="btn primary" id="createReport">生成待审报告（含微信补采）</button>
+            <span class="muted" id="reportMsg"></span>
+          </div>
+          <div class="sub" style="margin:10px 0 0">默认从上次报告结束时间开始；微信补采只针对「微信」页勾选的群，会多花几十秒。</div>
+        </div>
+        <div class="panel">
+          <h3>报告</h3>
+          <table><thead><tr><th>标题</th><th>状态</th><th>时间</th><th>操作</th></tr></thead><tbody id="reportRows"></tbody></table>
+        </div>
+      </section>
+
+      <section class="page" id="page-schedule">
+        <div class="panel">
+          <div class="row">
+            <select id="scheduleSource"><option value="auto" selected>自上次生成</option><option value="6">最近 6 小时</option><option value="24">最近 24 小时</option><option value="72">最近 72 小时</option></select>
+            <button class="btn primary" id="generateSchedule">从群聊生成日程</button>
+            <span class="muted" id="scheduleGenMsg"></span>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <select id="scheduleDays"><option value="7">未来 7 天</option><option value="14" selected>未来 14 天</option><option value="30">未来 30 天</option></select>
+            <button class="btn" id="reloadSchedule">刷新</button>
+            <button class="btn" data-export="ics">导出 ICS</button>
+            <button class="btn" data-export="csv">导出 CSV</button>
+            <button class="btn" data-export="md">导出 Markdown</button>
+            <span class="muted" id="scheduleMsg"></span>
+          </div>
+          <div class="sub" style="margin:10px 0 0">「从群聊生成日程」默认从上次生成时间开始，并补采已勾选的微信群。</div>
+        </div>
+        <div class="panel">
+          <table><thead><tr><th>时间</th><th>事项</th><th>类型</th><th>来源</th><th>置信度</th></tr></thead><tbody id="scheduleRows"></tbody></table>
+        </div>
+      </section>
+
+      <section class="page" id="page-settings">
+        <div class="panel">
+          <h3>QQ 读取</h3>
+          <div class="grid2">
+            <div class="field"><label>轮询间隔（毫秒，最小 1500）</label><input type="number" id="setInterval" min="1500" step="500"></div>
+            <div class="field"><label>重点提醒</label><select id="setAlerts"><option value="digest">只在摘要里体现</option><option value="instant">重点用户发言即提醒</option><option value="off">关闭</option></select></div>
+          </div>
+          <label class="check"><input type="checkbox" id="setCurrentChat"> 读取当前打开会话的完整消息</label>
+          <label class="check" style="margin-top:8px"><input type="checkbox" id="setAutoOpen"> 自动打开有未读的群补全消息（会清除未读！）</label>
+          <div class="row" style="margin-top:14px"><button class="btn primary" id="saveQq">保存 QQ 设置</button><span class="muted">保存后立即生效</span></div>
+        </div>
+
+        <div class="panel">
+          <h3>关注关键词</h3>
+          <div class="chips" id="keywordChips"></div>
+          <div class="row" style="margin-top:10px"><input type="text" id="newKeyword" placeholder="输入关键词，回车添加" style="flex:1"><button class="btn" id="addKeyword">添加</button></div>
+        </div>
+
+        <div class="panel">
+          <h3>自定义信息读取规则</h3>
+          <div class="sub">关键词或正则命中后，会加权并单独出现在报告的「自定义关注」里。</div>
+          <table><thead><tr><th>名称</th><th>匹配</th><th>类型</th><th>权重</th><th></th></tr></thead><tbody id="ruleRows"></tbody></table>
+          <div class="grid2" style="margin-top:12px">
+            <input type="text" id="ruleName" placeholder="名称，例如：比赛通知">
+            <input type="text" id="rulePattern" placeholder="关键词或正则，例如：初赛|复赛">
+            <select id="ruleType"><option value="keyword">关键词</option><option value="regex">正则</option></select>
+            <input type="number" id="ruleWeight" value="3" min="1" max="10" title="权重">
+          </div>
+          <div class="row" style="margin-top:10px"><button class="btn primary" id="addRule">添加规则</button><span class="muted" id="ruleMsg"></span></div>
+        </div>
+
+        <div class="panel">
+          <h3>摘要与投递</h3>
+          <div class="grid2">
+            <div class="field"><label>每日摘要时间（逗号分隔）</label><input type="text" id="setSlots" placeholder="09:00, 21:30"></div>
+            <div class="field"><label>默认回看小时</label><input type="number" id="setLookback" min="1" max="336"></div>
+          </div>
+          <div class="sub">投递通道（批准后使用）</div>
+          <div class="chips">
+            <label class="check"><input type="checkbox" class="ch-file" checked> 文件</label>
+            <label class="check"><input type="checkbox" class="ch-dsh"> DSH 会话</label>
+            <label class="check"><input type="checkbox" class="ch-qq"> QQ 私聊</label>
+            <label class="check"><input type="checkbox" class="ch-wechat"> 微信</label>
+          </div>
+          <div class="row" style="margin-top:14px"><button class="btn primary" id="saveDigest">保存摘要设置</button><span class="muted" id="digestMsg"></span></div>
+        </div>
+
+        <div class="panel">
+          <h3>关于</h3>
+          <div class="sub" id="aboutInfo">—</div>
+          <div class="row"><a class="btn" href="/setup?token=" id="classicLink" target="_blank">经典状态页</a><a class="btn" id="reviewLink" target="_blank">待审报告页</a></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+<div id="modal"><div class="modal-box"><div class="modal-head"><h3 id="modalTitle">—</h3><button class="btn small" id="modalClose">关闭</button></div><div class="modal-body"><pre id="modalBody"></pre></div></div></div>
+
+<script>
+const TOKEN = new URLSearchParams(location.search).get('token') || localStorage.getItem('gd_token') || '';
+if (TOKEN) localStorage.setItem('gd_token', TOKEN);
+const $ = (id) => document.getElementById(id);
+const state = { status: null, sessions: [], groups: [], selected: null, reports: [], follows: [], wechatGroups: [], wechatSettings: new Map() };
+
+function esc(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function toast(message, isError = false) {
+  const el = document.createElement('div');
+  el.className = 'toast' + (isError ? ' err' : '');
+  el.textContent = message;
+  $('toast').appendChild(el);
+  setTimeout(() => el.remove(), 3600);
+}
+function fmtTime(ts, withDate = false) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  if (Number.isNaN(d.getTime())) return '';
+  const pad = (n) => String(n).padStart(2, '0');
+  const clock = pad(d.getHours()) + ':' + pad(d.getMinutes());
+  return withDate ? (d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + clock : clock;
+}
+function chatIdOf(name) { return 'uia:' + name; }
+
+async function api(path, options = {}) {
+  const res = await fetch(path, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      Authorization: 'Bearer ' + TOKEN,
+      ...(options.headers || {}),
+    },
+  });
+  const text = await res.text();
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch { data = { error: text }; }
+  if (!res.ok) throw new Error(data?.error || ('HTTP ' + res.status));
+  return data;
+}
+
+function show(page) {
+  document.querySelectorAll('.nav-item').forEach((btn) => btn.classList.toggle('active', btn.dataset.page === page));
+  document.querySelectorAll('.page').forEach((el) => el.classList.toggle('active', el.id === 'page-' + page));
+  const titles = { home: '概览', qq: 'QQ', wechat: '微信', members: '重点成员', reports: '汇报', schedule: '日程', settings: '设置' };
+  $('title').textContent = titles[page] || page;
+  if (page === 'qq') renderGroups();
+  if (page === 'wechat') loadWechatPage();
+  if (page === 'members') loadMembers();
+  if (page === 'reports') loadReports();
+  if (page === 'schedule') loadSchedule();
+  if (page === 'settings') loadSettings();
+}
+document.querySelectorAll('.nav-item').forEach((btn) => btn.addEventListener('click', () => show(btn.dataset.page)));
+
+async function loadStatus() {
+  try {
+    const status = await api('/api/status');
+    state.status = status;
+    const qq = status.adapters?.qqUia || status.hub?.adapters?.qqUia;
+    $('qqState').textContent = qq?.status === 'ready' ? '正常' : (qq?.status || '未连接');
+    $('qqState').className = 'v ' + (qq?.status === 'ready' ? 'ok' : 'bad');
+    $('statSessions').textContent = qq?.sessions ?? 0;
+    $('statMessages').textContent = status.stats?.messages ?? 0;
+    $('statPending').textContent = status.stats?.pendingReports ?? 0;
+    const wx = status.adapters?.wechatOcr;
+    $('wechatState').textContent = wx?.monitored ? (wx.monitored + ' 个群') : '未选群';
+    $('wechatState').className = 'v ' + (wx?.monitored ? 'ok' : '');
+    $('sideDot').className = 'dot' + (qq?.status === 'ready' ? '' : ' bad');
+    $('sideState').textContent = qq?.status === 'ready' ? '已连接' : '未连接';
+    $('clock').textContent = fmtTime(new Date().toISOString(), true);
+  } catch (err) {
+    $('sideState').textContent = '连接失败';
+    $('sideDot').className = 'dot bad';
+    toast(err.message, true);
+  }
+}
+
+async function loadSessions() {
+  try {
+    const data = await api('/api/qq/sessions');
+    state.sessions = data.sessions || [];
+    renderHomeSessions();
+    renderSessionList();
+    renderGroupSelect();
+  } catch (err) {
+    state.sessions = [];
+    renderHomeSessions();
+  }
+}
+function renderHomeSessions() {
+  const rows = state.sessions.slice(0, 6);
+  $('homeSessions').innerHTML = rows.length
+    ? rows.map((s) => '<tr><td>' + esc(s.name) + '</td><td class="muted ellipsis">' + esc((s.sender ? s.sender + '：' : '') + s.preview) + '</td><td>' + (s.unread ? '<span class="unread">' + s.unread + '</span>' : '') + '</td></tr>').join('')
+    : '<tr><td colspan="3" class="muted">暂无会话。确认 QQ 已登录，并用启动器启动。</td></tr>';
+}
+
+function renderSessionList() {
+  const list = $('sessionList');
+  if (!list) return;
+  list.innerHTML = state.sessions.length
+    ? state.sessions.map((s) => '<div class="list-item' + (state.selected === s.name ? ' active' : '') + '" data-name="' + esc(s.name) + '">' +
+        '<div class="name">' + esc(s.name) + '<div class="meta">' + esc(s.time) + ' · ' + esc(s.sender || '') + '</div></div>' +
+        (s.unread ? '<span class="unread">' + s.unread + '</span>' : '') + '</div>').join('')
+    : '<div class="empty">暂无会话</div>';
+  list.querySelectorAll('.list-item').forEach((item) => item.addEventListener('click', () => selectGroup(item.dataset.name)));
+}
+
+function renderGroups() {
+  renderSessionList();
+  if (!state.selected && state.sessions.length) {
+    selectGroup(state.sessions[0].name);
+    return;
+  }
+  if (state.selected) selectGroup(state.selected, true);
+}
+async function selectGroup(name, keep = false) {
+  state.selected = name;
+  renderSessionList();
+  const id = chatIdOf(name);
+  const panel = $('groupPanel');
+  panel.innerHTML = '<div class="empty">加载中…</div>';
+  try {
+    const [settingsData, messages] = await Promise.all([
+      api('/api/group-settings?chatId=' + encodeURIComponent(id)),
+      api('/api/messages?chatId=' + encodeURIComponent(id) + '&limit=60'),
+    ]);
+    const s = settingsData || {};
+    const msgs = (messages.messages || []).slice().reverse();
+    panel.innerHTML =
+      '<div class="row" style="justify-content:space-between">' +
+        '<div><h2 style="margin:0">' + esc(name) + '</h2><div class="sub" style="margin:2px 0 0">' + id + '</div></div>' +
+        '<button class="btn primary" id="readLatest">读取最新</button>' +
+      '</div>' +
+      '<div class="panel subpanel" style="margin-top:14px">' +
+        '<label class="check"><input type="checkbox" id="gEnabled" ' + (s.enabled !== false ? 'checked' : '') + '> 纳入监控</label>' +
+        '<label class="check" style="margin-top:8px"><input type="checkbox" id="gAutoRead" ' + (s.autoRead ? 'checked' : '') + '> 有未读时自动打开补全（会清除未读）</label>' +
+        '<div class="field" style="margin-top:12px"><label>本群额外关键词（逗号分隔）</label><input type="text" id="gKeywords" value="' + esc((s.keywords || []).join(', ')) + '"></div>' +
+        '<button class="btn" id="saveGroup">保存本群设置</button>' +
+      '</div>' +
+      '<div class="panel" style="margin-top:14px"><h3>最近消息</h3>' +
+        (msgs.length ? msgs.map((m) => '<div class="msg"><span class="who">' + esc(m.senderName) + '</span><span class="when">' + fmtTime(m.ts, true) + '</span><div class="txt">' + esc(m.text) + '</div></div>').join('') : '<div class="empty">还没有采集到消息，点「读取最新」。</div>') +
+      '</div>';
+    $('readLatest').addEventListener('click', async (e) => {
+      const session = state.sessions.find((item) => item.name === name);
+      if (session?.unread && !confirm(`读取最新会打开该群并清除 ${session.unread} 条未读，继续？`)) return;
+      e.target.disabled = true;
+      try {
+        const result = await api('/api/qq/read', { method: 'POST', body: JSON.stringify({ group: name, limit: 30 }) });
+        toast('已读取 ' + result.count + ' 条（该群已标记为已读）');
+        await selectGroup(name, true);
+        await loadStatus();
+      } catch (err) { toast(err.message, true); }
+      finally { e.target.disabled = false; }
+    });
+    $('saveGroup').addEventListener('click', async (e) => {
+      e.target.disabled = true;
+      try {
+        await api('/api/group-settings', {
+          method: 'POST',
+          body: JSON.stringify({
+            chatId: id,
+            enabled: $('gEnabled').checked,
+            autoRead: $('gAutoRead').checked,
+            keywords: $('gKeywords').value.split(/[,，]/).map((x) => x.trim()).filter(Boolean),
+          }),
+        });
+        toast('本群设置已保存');
+      } catch (err) { toast(err.message, true); }
+      finally { e.target.disabled = false; }
+    });
+  } catch (err) {
+    panel.innerHTML = '<div class="empty">加载失败：' + esc(err.message) + '</div>';
+  }
+}
+
+async function loadMembers() {
+  renderGroupSelect();
+  const name = $('memberGroup').value || state.sessions[0]?.name;
+  if (!name) { $('memberRows').innerHTML = '<tr><td colspan="5" class="muted">暂无群</td></tr>'; return; }
+  try {
+    const data = await api('/api/members?chatId=' + encodeURIComponent(chatIdOf(name)));
+    const rows = data.members || [];
+    $('memberRows').innerHTML = rows.length ? rows.map((m) => {
+      const followed = Boolean(m.follow);
+      return '<tr><td>' + esc(m.senderName) + '<div class="muted" style="font-size:11px">' + esc(m.senderId) + '</div></td>' +
+        '<td>' + m.count + '</td><td class="muted">' + fmtTime(m.lastAt, true) + '</td>' +
+        '<td>' + (followed ? '<span class="badge sent">已关注</span>' : '<span class="badge">—</span>') + '</td>' +
+        '<td><button class="btn small" data-follow="' + esc(m.senderId) + '" data-name="' + esc(m.senderName) + '">' + (followed ? '更新' : '关注') + '</button></td></tr>';
+    }).join('') : '<tr><td colspan="5" class="muted">这个群还没有采集到成员发言</td></tr>';
+    $('memberRows').querySelectorAll('button[data-follow]').forEach((btn) => btn.addEventListener('click', () => followMember(chatIdOf(name), btn.dataset.follow, btn.dataset.name)));
+  } catch (err) {
+    $('memberRows').innerHTML = '<tr><td colspan="5" class="muted">' + esc(err.message) + '</td></tr>';
+  }
+  loadFollows();
+}
+
+async function followMember(chatId, userId, userName, platform = 'qq') {
+  const priority = prompt('优先级：high / normal / low', 'high');
+  if (priority === null) return;
+  const note = prompt('备注（可留空）', '') ?? '';
+  try {
+    await api('/api/follows', {
+      method: 'POST',
+      body: JSON.stringify({ platform, chatId, userId, userName, priority: priority.trim() || 'normal', note }),
+    });
+    toast('已关注 ' + userName);
+    loadMembers();
+  } catch (err) { toast(err.message, true); }
+}
+async function loadFollows() {
+  try {
+    const data = await api('/api/follows');
+    state.follows = data.follows || [];
+    $('followRows').innerHTML = state.follows.length ? state.follows.map((f) =>
+      '<tr><td>' + esc(f.userName || f.userId) + '</td><td class="muted">' + esc(f.chatId) + '</td>' +
+      '<td>' + esc(f.priority) + '</td><td class="muted">' + esc(f.note) + '</td>' +
+      '<td><button class="btn small danger" data-unfollow="' + esc(f.userId) + '" data-chat="' + esc(f.chatId) + '" data-platform="' + esc(f.platform) + '">取消</button></td></tr>').join('')
+      : '<tr><td colspan="5" class="muted">还没有关注任何人</td></tr>';
+    $('followRows').querySelectorAll('button[data-unfollow]').forEach((btn) => btn.addEventListener('click', async () => {
+      try {
+        await api('/api/follows/remove', { method: 'POST', body: JSON.stringify({ platform: btn.dataset.platform, chatId: btn.dataset.chat, userId: btn.dataset.unfollow }) });
+        toast('已取消关注');
+        loadMembers();
+      } catch (err) { toast(err.message, true); }
+    }));
+  } catch {}
+}
+function renderGroupSelect() {
+  const select = $('memberGroup');
+  if (!select) return;
+  const current = select.value;
+  select.innerHTML = state.sessions.map((s) => '<option value="' + esc(s.name) + '">' + esc(s.name) + '</option>').join('');
+  if (current && state.sessions.some((s) => s.name === current)) select.value = current;
+}
+$('memberGroup').addEventListener('change', loadMembers);
+
+let memberSearchTimer = null;
+async function searchMembers() {
+  const q = $('memberSearch').value.trim();
+  if (!q) {
+    $('memberSearchRows').innerHTML = '<tr><td colspan="5" class="muted">输入名字开始搜索。</td></tr>';
+    return;
+  }
+  try {
+    const data = await api('/api/members/search?q=' + encodeURIComponent(q));
+    const rows = data.members || [];
+    $('memberSearchRows').innerHTML = rows.length ? rows.map((m) =>
+      '<tr><td>' + esc(m.senderName) + '</td><td class="muted ellipsis">' + esc(m.chatName || m.chatId) + '</td>' +
+      '<td>' + m.count + '</td><td class="muted">' + fmtTime(m.lastAt, true) + '</td>' +
+      '<td><button class="btn small" data-ms-chat="' + esc(m.chatId) + '" data-ms-user="' + esc(m.senderId) + '" data-ms-name="' + esc(m.senderName) + '" data-ms-platform="' + esc(m.platform) + '">' + (m.follow ? '更新关注' : '关注') + '</button></td></tr>').join('')
+      : '<tr><td colspan="5" class="muted">没有找到匹配的成员。</td></tr>';
+    $('memberSearchRows').querySelectorAll('button[data-ms-user]').forEach((btn) => btn.addEventListener('click', async () => {
+      await followMember(btn.dataset.msChat, btn.dataset.msUser, btn.dataset.msName, btn.dataset.msPlatform);
+      searchMembers();
+    }));
+  } catch (err) {
+    $('memberSearchRows').innerHTML = '<tr><td colspan="5" class="muted">' + esc(err.message) + '</td></tr>';
+  }
+}
+$('memberSearch').addEventListener('input', () => {
+  clearTimeout(memberSearchTimer);
+  memberSearchTimer = setTimeout(searchMembers, 300);
+});
+$('clearMemberSearch').addEventListener('click', () => {
+  $('memberSearch').value = '';
+  searchMembers();
+});
+
+async function loadReports() {
+  try {
+    const data = await api('/api/reports?limit=30');
+    state.reports = data.reports || [];
+    const labels = { pending: '待审核', approved: '已批准', sent: '已发送', rejected: '已驳回' };
+    $('reportRows').innerHTML = state.reports.length ? state.reports.map((r) =>
+      '<tr><td>' + esc(r.title) + '</td><td><span class="badge ' + esc(r.status) + '">' + (labels[r.status] || r.status) + '</span></td>' +
+      '<td class="muted">' + fmtTime(r.createdAt, true) + '</td>' +
+      '<td><button class="btn small" data-view="' + esc(r.id) + '">查看</button> ' +
+      (r.status === 'pending' ? '<button class="btn small primary" data-approve="' + esc(r.id) + '">批准发送</button> <button class="btn small danger" data-reject="' + esc(r.id) + '">驳回</button> ' : '') +
+      '<a class="btn small" href="/review/' + encodeURIComponent(r.id) + '?token=' + encodeURIComponent(TOKEN) + '" target="_blank">审核页</a></td></tr>').join('')
+      : '<tr><td colspan="4" class="muted">还没有报告</td></tr>';
+    bindReportButtons();
+  } catch (err) { $('reportRows').innerHTML = '<tr><td colspan="4" class="muted">' + esc(err.message) + '</td></tr>'; }
+}
+function bindReportButtons() {
+  document.querySelectorAll('button[data-view]').forEach((btn) => btn.addEventListener('click', async () => {
+    try {
+      const report = await api('/api/reports/' + encodeURIComponent(btn.dataset.view));
+      openModal(report.title, report.markdown);
+    } catch (err) { toast(err.message, true); }
+  }));
+  document.querySelectorAll('button[data-approve]').forEach((btn) => btn.addEventListener('click', async () => {
+    if (!confirm('批准后将按报告通道发送（文件/DSH/QQ/微信）。确定？')) return;
+    btn.disabled = true;
+    try {
+      const result = await api('/api/reports/' + encodeURIComponent(btn.dataset.approve) + '/approve', {
+        method: 'POST', body: JSON.stringify({ confirmed: true, approvedBy: 'app' }),
+      });
+      toast(result.ok ? '已发送' : '部分通道失败，请看报告详情');
+      loadReports();
+    } catch (err) { toast(err.message, true); }
+    finally { btn.disabled = false; }
+  }));
+  document.querySelectorAll('button[data-reject]').forEach((btn) => btn.addEventListener('click', async () => {
+    const reason = prompt('驳回原因（可留空）', '') ?? '';
+    try {
+      await api('/api/reports/' + encodeURIComponent(btn.dataset.reject) + '/reject', { method: 'POST', body: JSON.stringify({ reason }) });
+      toast('已驳回'); loadReports();
+    } catch (err) { toast(err.message, true); }
+  }));
+}
+
+async function loadSchedule() {
+  const days = Number($('scheduleDays').value) || 14;
+  try {
+    const data = await api('/api/schedule/upcoming?days=' + days);
+    const labels = { deadline: '截止', meeting: '会议', contest: '比赛', activity: '活动', event: '事项' };
+    $('scheduleRows').innerHTML = (data.events || []).length ? data.events.map((e) =>
+      '<tr><td>' + fmtTime(e.startAt, true) + '</td><td>' + esc(e.title) + '</td><td>' + (labels[e.kind] || '事项') + '</td>' +
+      '<td class="muted">' + esc((e.chatName || '') + ' · ' + (e.sourceSender || '')) + '</td><td>' + Math.round((e.confidence || 0) * 100) + '%</td></tr>').join('')
+      : '<tr><td colspan="5" class="muted">未来 ' + days + ' 天没有识别到日程</td></tr>';
+  } catch (err) { $('scheduleRows').innerHTML = '<tr><td colspan="5" class="muted">' + esc(err.message) + '</td></tr>'; }
+}
+$('scheduleDays').addEventListener('change', loadSchedule);
+
+$('generateSchedule').addEventListener('click', async (e) => {
+  const choice = $('scheduleSource').value;
+  e.target.disabled = true;
+  $('scheduleGenMsg').textContent = '正在后台补采微信并提取日程…';
+  let secs = 0;
+  const ticker = setInterval(() => { $('scheduleGenMsg').textContent = `正在后台补采微信并提取日程… ${++secs}s`; }, 1000);
+  try {
+    const payload = { refreshWeChat: true };
+    if (choice !== 'auto') payload.since = new Date(Date.now() - Number(choice) * 3600e3).toISOString();
+    const result = await api('/api/schedule/generate', { method: 'POST', body: JSON.stringify(payload) });
+    const wx = result.wechat;
+    const wxText = wx?.error ? `；微信补采失败：${wx.error}` : (wx?.messages ? `；微信补采 ${wx.messages} 条` : '');
+    $('scheduleGenMsg').textContent = `识别到 ${result.count} 条日程${wxText}`;
+    toast(result.count ? `识别到 ${result.count} 条日程` : '没有识别到日程');
+    await loadSchedule();
+    loadStatus();
+  } catch (err) {
+    $('scheduleGenMsg').textContent = err.message;
+    toast(err.message, true);
+  } finally {
+    clearInterval(ticker);
+    e.target.disabled = false;
+  }
+});
+$('reloadSchedule').addEventListener('click', loadSchedule);
+document.querySelectorAll('button[data-export]').forEach((btn) => btn.addEventListener('click', async () => {
+  try {
+    const result = await api('/api/schedule/export', {
+      method: 'POST',
+      body: JSON.stringify({ format: btn.dataset.export, since: new Date(Date.now() - 7 * 864e5).toISOString(), until: new Date(Date.now() + 60 * 864e5).toISOString() }),
+    });
+    $('scheduleMsg').textContent = result.path ? ('导出：' + result.path) : '没有可导出的日程';
+    toast(result.path ? '已导出' : '没有可导出的日程');
+  } catch (err) { toast(err.message, true); }
+}));
+
+async function loadSettings() {
+  try {
+    const cfg = await api('/api/config');
+    $('setInterval').value = cfg.adapters?.qqUia?.intervalMs ?? 5000;
+    $('setAlerts').value = cfg.watch?.followAlerts || 'digest';
+    $('setCurrentChat').checked = cfg.adapters?.qqUia?.readCurrentChat !== false;
+    $('setAutoOpen').checked = Boolean(cfg.adapters?.qqUia?.autoOpenUnread);
+    $('setSlots').value = (cfg.digest?.slots || []).join(', ');
+    $('setLookback').value = cfg.digest?.lookbackHours ?? 12;
+    const channels = new Set(cfg.delivery?.channels || []);
+    document.querySelector('.ch-file').checked = channels.has('file');
+    document.querySelector('.ch-dsh').checked = channels.has('dsh');
+    document.querySelector('.ch-qq').checked = channels.has('qq');
+    document.querySelector('.ch-wechat').checked = channels.has('wechat');
+    renderKeywords(cfg.watch?.keywords || []);
+    renderRules(cfg.watch?.customRules || []);
+    $('aboutInfo').textContent = '数据库：' + (state.status?.storage?.db || '') + ' · 时区 UTC+8 · 审核策略：批准后外发';
+    $('classicLink').href = '/setup?token=' + encodeURIComponent(TOKEN);
+    $('reviewLink').href = '/app?token=' + encodeURIComponent(TOKEN) + '&page=reports';
+  } catch (err) { toast(err.message, true); }
+}
+
+function wechatKey(name) {
+  return String(name || '').replace(/\s+/g, '').replace(/[．.·…]/g, '').toLowerCase();
+}
+function wechatChatId(name) { return 'wechat:' + wechatKey(name); }
+
+async function loadWechatPage() {
+  try {
+    const [cfg, status] = await Promise.all([api('/api/config'), api('/api/status')]);
+    $('wechatEnabled').checked = cfg.adapters?.wechatOcr?.enabled !== false;
+    $('wechatInterval').value = Math.round((cfg.adapters?.wechatOcr?.intervalMs ?? 120000) / 1000);
+    const wx = status.adapters?.wechatOcr || {};
+    $('wxPageState').textContent = wx.monitored ? '运行中' : (wx.status === 'error' ? '异常' : '未选群');
+    $('wxPageState').className = 'v ' + (wx.monitored ? 'ok' : '');
+    $('wxPageMonitored').textContent = wx.monitored ?? 0;
+    $('wxPageLast').textContent = wx.lastScanAt ? fmtTime(wx.lastScanAt, true) : '—';
+    if (wx.lastError) $('wechatMsg').textContent = wx.lastError;
+  } catch (err) { toast(err.message, true); }
+  await loadWechatSettings();
+  await loadWechatRecent();
+}
+
+async function loadWechatRecent() {
+  try {
+    const data = await api('/api/messages?platform=wechat&limit=20');
+    const messages = data.messages || [];
+    $('wechatRecent').innerHTML = messages.length
+      ? '<div class="sub" style="margin-bottom:6px">最近 ' + messages.length + ' 条</div>' + messages.map((m) =>
+          '<div class="msg"><span class="who">' + esc(m.senderName) + '</span><span class="when">' + fmtTime(m.ts, true) + '</span><div class="txt">' + esc(m.text) + '</div></div>').join('')
+      : '<div class="empty">还没有收录微信消息。勾选群并等待巡检，或点「读取」。</div>';
+  } catch {}
+}
+
+async function loadWechatSettings() {
+  try {
+    const data = await api('/api/group-settings?platform=wechat');
+    state.wechatSettings = new Map((data.settings || []).map((item) => [item.chatId, item]));
+    renderWechatRows();
+  } catch {}
+}
+
+function renderWechatRows() {
+  const rows = state.wechatGroups.slice();
+  const present = new Set(rows.map((group) => wechatChatId(group.name)));
+  for (const [chatId, setting] of state.wechatSettings) {
+    if (!present.has(chatId) && (setting.enabled || !rows.length)) {
+      rows.push({ name: chatId.replace(/^wechat:/, ''), time: '', preview: '(不在当前列表)' });
+    }
+  }
+  $('wechatRows').innerHTML = rows.length ? rows.map((group, index) => {
+    const chatId = wechatChatId(group.name);
+    const setting = state.wechatSettings.get(chatId);
+    return '<tr><td>' + esc(group.name) + '</td><td class="muted ellipsis">' + esc(group.preview || '') + '</td>' +
+      '<td class="muted">' + esc(group.time || '') + '</td>' +
+      '<td><label class="check"><input type="checkbox" class="wx-check" data-name="' + esc(group.name) + '" data-chat="' + esc(chatId) + '" ' + (setting?.enabled ? 'checked' : '') + '> 监控</label></td>' +
+      '<td><button class="btn small" data-wx-read="' + index + '">读取</button></td></tr>';
+  }).join('') : '<tr><td colspan="5" class="muted">还没有读取列表，点「刷新微信群列表」。</td></tr>';
+
+  $('wechatRows').querySelectorAll('button[data-wx-read]').forEach((btn) => btn.addEventListener('click', async () => {
+    const group = rows[Number(btn.dataset.wxRead)];
+    if (!confirm(`读取「${group.name}」会打开该群并清除未读，继续？`)) return;
+    btn.disabled = true;
+    $('wechatMsg').textContent = '正在打开 ' + group.name + ' …';
+    try {
+      const result = await api('/api/wechat/scan', {
+        method: 'POST',
+        body: JSON.stringify({ group: group.name, x: group.x, y: group.y }),
+      });
+      $('wechatMsg').textContent = result.count ? ('已收录 ' + result.count + ' 条：' + result.chatName) : ('内容未变化：' + result.chatName);
+      openModal(result.chatName || group.name, result.text || '(没有识别到文字)');
+      loadWechatRecent();
+    } catch (err) {
+      $('wechatMsg').textContent = err.message;
+      toast(err.message, true);
+    } finally { btn.disabled = false; }
+  }));
+}
+
+$('refreshWechat').addEventListener('click', async (e) => {
+  e.target.disabled = true;
+  $('wechatMsg').textContent = '后台读取中，不会把微信调到前台…';
+  try {
+    const data = await api('/api/wechat/groups');
+    state.wechatGroups = data.groups || [];
+    renderWechatRows();
+    $('wechatMsg').textContent = '读到 ' + state.wechatGroups.length + ' 个会话，勾选后保存';
+  } catch (err) {
+    $('wechatMsg').textContent = err.message;
+    toast(err.message, true);
+  } finally { e.target.disabled = false; }
+});
+
+$('wechatSelectAll').addEventListener('click', () => {
+  document.querySelectorAll('.wx-check').forEach((el) => { el.checked = true; });
+});
+$('wechatClearAll').addEventListener('click', () => {
+  document.querySelectorAll('.wx-check').forEach((el) => { el.checked = false; });
+});
+
+$('saveWechat').addEventListener('click', async (e) => {
+  e.target.disabled = true;
+  try {
+    await api('/api/config', {
+      method: 'POST',
+      body: JSON.stringify({ adapters: { wechatOcr: {
+        enabled: $('wechatEnabled').checked,
+        intervalMs: Math.max(30, Number($('wechatInterval').value) || 120) * 1000,
+      } } }),
+    });
+    const checks = [...document.querySelectorAll('.wx-check')];
+    for (const check of checks) {
+      await api('/api/group-settings', {
+        method: 'POST',
+        body: JSON.stringify({
+          platform: 'wechat',
+          chatId: check.dataset.chat,
+          enabled: check.checked,
+          autoRead: true,
+          keywords: [],
+        }),
+      });
+    }
+    const present = new Set(checks.map((c) => c.dataset.chat));
+    for (const chatId of state.wechatSettings.keys()) {
+      if (!present.has(chatId)) {
+        await api('/api/group-settings', {
+          method: 'POST',
+          body: JSON.stringify({ platform: 'wechat', chatId, enabled: false, autoRead: false, keywords: [] }),
+        });
+      }
+    }
+    await loadWechatSettings();
+    await loadWechatRecent();
+    $('wechatMsg').textContent = '已保存并立即生效';
+    toast('微信监控设置已保存');
+    loadStatus();
+  } catch (err) {
+    toast(err.message, true);
+  } finally { e.target.disabled = false; }
+});
+function renderKeywords(keywords) {
+  $('keywordChips').innerHTML = keywords.map((k) => '<span class="chip">' + esc(k) + '<button data-k="' + esc(k) + '">×</button></span>').join('') || '<span class="muted">还没有关键词</span>';
+  $('keywordChips').querySelectorAll('button[data-k]').forEach((btn) => btn.addEventListener('click', async () => {
+    const current = await api('/api/config');
+    const next = (current.watch?.keywords || []).filter((k) => k !== btn.dataset.k);
+    await api('/api/config', { method: 'POST', body: JSON.stringify({ watch: { keywords: next } }) });
+    renderKeywords(next);
+  }));
+}
+async function addKeyword() {
+  const value = $('newKeyword').value.trim();
+  if (!value) return;
+  const cfg = await api('/api/config');
+  const next = [...new Set([...(cfg.watch?.keywords || []), value])];
+  await api('/api/config', { method: 'POST', body: JSON.stringify({ watch: { keywords: next } }) });
+  $('newKeyword').value = '';
+  renderKeywords(next);
+}
+$('addKeyword').addEventListener('click', addKeyword);
+$('newKeyword').addEventListener('keydown', (e) => { if (e.key === 'Enter') addKeyword(); });
+
+function renderRules(rules) {
+  $('ruleRows').innerHTML = rules.length ? rules.map((r) =>
+    '<tr><td>' + esc(r.name) + '</td><td><code>' + esc(r.pattern) + '</code></td><td>' + (r.type === 'regex' ? '正则' : '关键词') + '</td><td>' + (r.weight || 3) + '</td>' +
+    '<td><button class="btn small danger" data-rule="' + esc(r.name) + '">删除</button></td></tr>').join('')
+    : '<tr><td colspan="5" class="muted">还没有自定义规则</td></tr>';
+  $('ruleRows').querySelectorAll('button[data-rule]').forEach((btn) => btn.addEventListener('click', async () => {
+    await api('/api/custom-rules?name=' + encodeURIComponent(btn.dataset.rule), { method: 'DELETE' });
+    const cfg = await api('/api/config');
+    renderRules(cfg.watch?.customRules || []);
+  }));
+}
+$('addRule').addEventListener('click', async () => {
+  const payload = { name: $('ruleName').value.trim(), pattern: $('rulePattern').value.trim(), type: $('ruleType').value, weight: Number($('ruleWeight').value) || 3 };
+  if (!payload.pattern) { $('ruleMsg').textContent = '先填匹配内容'; return; }
+  try {
+    const result = await api('/api/custom-rules', { method: 'POST', body: JSON.stringify(payload) });
+    renderRules(result.rules || []);
+    $('ruleMsg').textContent = '已保存';
+    $('ruleName').value = ''; $('rulePattern').value = '';
+  } catch (err) { $('ruleMsg').textContent = err.message; }
+});
+
+$('saveQq').addEventListener('click', async (e) => {
+  e.target.disabled = true;
+  try {
+    await api('/api/config', { method: 'POST', body: JSON.stringify({ adapters: { qqUia: {
+      intervalMs: Number($('setInterval').value) || 5000,
+      readCurrentChat: $('setCurrentChat').checked,
+      autoOpenUnread: $('setAutoOpen').checked,
+    } }, watch: { followAlerts: $('setAlerts').value } }) });
+    toast('QQ 设置已保存并立即生效');
+  } catch (err) { toast(err.message, true); } finally { e.target.disabled = false; }
+});
+$('saveDigest').addEventListener('click', async (e) => {
+  e.target.disabled = true;
+  try {
+    const channels = [];
+    if (document.querySelector('.ch-file').checked) channels.push('file');
+    if (document.querySelector('.ch-dsh').checked) channels.push('dsh');
+    if (document.querySelector('.ch-qq').checked) channels.push('qq');
+    if (document.querySelector('.ch-wechat').checked) channels.push('wechat');
+    await api('/api/config', { method: 'POST', body: JSON.stringify({
+      digest: { slots: $('setSlots').value.split(/[,，]/).map((x) => x.trim()).filter(Boolean), lookbackHours: Number($('setLookback').value) || 12 },
+      delivery: { channels },
+    }) });
+    $('digestMsg').textContent = '已保存';
+    toast('摘要设置已保存');
+  } catch (err) { toast(err.message, true); } finally { e.target.disabled = false; }
+});
+
+$('createReport').addEventListener('click', async (e) => {
+  const choice = $('reportHours').value;
+  e.target.disabled = true;
+  $('reportMsg').textContent = '正在后台补采微信并生成…';
+  let secs = 0;
+  const ticker = setInterval(() => { $('reportMsg').textContent = `正在后台补采微信并生成… ${++secs}s`; }, 1000);
+  try {
+    const payload = { refreshWeChat: true };
+    if (choice !== 'auto') payload.since = new Date(Date.now() - Number(choice) * 3600e3).toISOString();
+    const result = await api('/api/reports', { method: 'POST', body: JSON.stringify(payload) });
+    const wx = result.wechat;
+    const wxText = wx?.error ? `；微信补采失败：${wx.error}` : (wx?.messages ? `；微信补采 ${wx.messages} 条` : (wx?.note ? `；${wx.note}` : ''));
+    if (!result.created) {
+      $('reportMsg').textContent = (result.message || '自上次报告以来没有新消息') + wxText;
+      return;
+    }
+    toast('已生成待审报告');
+    $('reportMsg').textContent = `报告 ${result.report.id}（${fmtTime(result.range?.since, true)} → ${fmtTime(result.range?.until, true)}）${wxText}`;
+    await loadReports();
+    const full = await api('/api/reports/' + encodeURIComponent(result.report.id));
+    openModal(full.title, full.markdown);
+  } catch (err) {
+    $('reportMsg').textContent = err.message;
+    toast(err.message, true);
+  } finally {
+    clearInterval(ticker);
+    e.target.disabled = false;
+  }
+});
+
+$('quickReport').addEventListener('click', () => { show('reports'); $('createReport').click(); });
+$('quickWechat').addEventListener('click', () => show('wechat'));
+$('quickSettings').addEventListener('click', () => show('settings'));
+
+$('reportHours').addEventListener('change', () => {});
+$('refresh').addEventListener('click', () => { loadStatus(); loadSessions(); loadReports(); toast('已刷新'); });
+setInterval(() => { loadStatus(); loadSessions(); }, 15000);
+
+function openModal(title, text) {
+  $('modalTitle').textContent = title;
+  $('modalBody').textContent = text;
+  $('modal').classList.add('open');
+}
+$('modalClose').addEventListener('click', () => $('modal').classList.remove('open'));
+$('modal').addEventListener('click', (e) => { if (e.target === $('modal')) $('modal').classList.remove('open'); });
+
+function applyTheme(theme, persist = true) {
+  const seraphine = theme === 'seraphine';
+  if (seraphine) document.documentElement.dataset.theme = 'seraphine';
+  else delete document.documentElement.dataset.theme;
+  const btn = $('themeToggle');
+  if (btn) btn.textContent = seraphine ? '✦ 默认主题' : '✦ 星籁主题';
+  if (persist) {
+    try { localStorage.setItem('gd_theme', seraphine ? 'seraphine' : 'default'); } catch {}
+  }
+}
+$('themeToggle').addEventListener('click', () => {
+  applyTheme(document.documentElement.dataset.theme === 'seraphine' ? 'default' : 'seraphine');
+});
+applyTheme(document.documentElement.dataset.theme === 'seraphine' ? 'seraphine' : 'default', false);
+
+(async function init() {
+  if (!TOKEN) { document.body.innerHTML = '<div class="empty">缺少 token，请从启动器打开。</div>'; return; }
+  await loadStatus();
+  await loadSessions();
+  await loadReports();
+  const page = new URLSearchParams(location.search).get('page');
+  if (page && document.getElementById('page-' + page)) show(page);
+})();
+</script>
+</body>
+</html>

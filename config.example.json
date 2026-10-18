@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8791,
+    "token": "<运行 node src/cli.js init 生成随机 token>"
+  },
+  "timezone": {
+    "utcOffsetMinutes": 480,
+    "label": "Asia/Shanghai"
+  },
+  "storage": {
+    "dir": "state"
+  },
+  "adapters": {
+    "onebot": {
+      "enabled": false,
+      "url": "ws://127.0.0.1:3001",
+      "accessToken": "",
+      "reconnectMs": 5000,
+      "includeGroups": []
+    },
+    "webhook": {
+      "enabled": true
+    },
+    "mock": {
+      "enabled": false
+    },
+    "qqUia": {
+      "enabled": true,
+      "intervalMs": 5000,
+      "readCurrentChat": true,
+      "autoOpenUnread": false,
+      "qqPath": "",
+      "restartIfNeeded": true
+    },
+    "wechatOcr": {
+      "enabled": true,
+      "intervalMs": 120000
+    }
+  },
+  "watch": {
+    "keywords": ["截止", "报名", "会议", "开会", "比赛", "答辩", "提交", "确认", "重要"],
+    "excludedGroups": [],
+    "follows": [],
+    "includePrivate": false,
+    "followAlerts": "digest",
+    "followAlertDebounceMinutes": 10,
+    "customRules": []
+  },
+  "digest": {
+    "slots": ["09:00", "21:30"],
+    "lookbackHours": 12,
+    "maxKeyMessages": 40,
+    "topHighlights": 15,
+    "minMessages": 1,
+    "autoCreateReport": true,
+    "reportTitle": "群聊情报",
+    "channels": ["file", "dsh"],
+    "catchUpHours": 6
+  },
+  "schedule": {
+    "enabled": true,
+    "lookaheadDays": 14,
+    "defaultDurationMinutes": 60,
+    "minConfidence": 0.5
+  },
+  "delivery": {
+    "channels": ["file", "dsh"],
+    "dsh": {
+      "enabled": true,
+      "notify": true
+    },
+    "qq": {
+      "enabled": false,
+      "appId": "",
+      "clientSecret": "",
+      "apiBase": "https://api.bot.qq.com",
+      "userOpenId": "latest",
+      "contactsFile": "",
+      "maxChars": 1800
+    },
+    "wechat": {
+      "enabled": false,
+      "sendUrl": "",
+      "token": "",
+      "to": "",
+      "maxChars": 1500
+    }
+  },
+  "review": {
+    "required": true,
+    "approver": "user"
+  },
+  "notifications": {
+    "limit": 500
+  },
+  "launcher": {
+    "openBrowser": true
+  },
+  "logging": {
+    "level": "info"
+  }
+}

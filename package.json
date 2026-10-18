@@ -1,0 +1,34 @@
+{
+  "name": "group-digest",
+  "version": "0.1.0",
+  "private": true,
+  "description": "萨勒芬妮：采集 QQ/微信群消息，跟踪重点用户，生成摘要汇报（人工审核后外发）与日程表；通过 MCP + DSH 插件接入 DeepSeek Harness。",
+  "type": "module",
+  "main": "src/hub.js",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "launch": "node src/launcher.js",
+    "shortcut": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-shortcut.ps1",
+    "icon": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/make-icon.ps1",
+    "init": "node src/cli.js init",
+    "start": "node src/hub.js",
+    "status": "node src/cli.js status",
+    "demo": "node src/cli.js demo",
+    "digest": "node src/cli.js digest",
+    "test": "node test/run.js",
+    "simulator": "node test/onebot-simulator.js",
+    "relay": "node bridges/wechat-relay.mjs"
+  },
+  "keywords": [
+    "qq",
+    "wechat",
+    "onebot",
+    "group-chat",
+    "digest",
+    "mcp",
+    "dsh"
+  ],
+  "license": "MIT"
+}
