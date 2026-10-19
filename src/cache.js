@@ -196,21 +196,29 @@ export function cacheStatus({ paths, config = {} } = {}) {
 
 /** hub 启动时挂定时器；返回 stop()。 */
 export function startCacheCleaner({ paths, config, log = () => {}, intervalMs } = {}) {
-  const cfg = { ...DEFAULT_CACHE_CONFIG, ...(config.cache ?? {}) };
-  // 即使当前关闭也挂定时器：设置页重新开启后无需重启 Hub。
-  const every = Math.max(60_000, Number(intervalMs) || Number(cfg.intervalMs) || DEFAULT_CACHE_CONFIG.intervalMs);
   let stopped = false;
-  const run = () => {
+  let lastRun = 0;
+  const check = () => {
     if (stopped) return;
+    const cfg = { ...DEFAULT_CACHE_CONFIG, ...(config.cache ?? {}) };
+    if (cfg.enabled === false) return;
+    const every = Math.max(
+      60_000,
+      Number(intervalMs) || Number(cfg.intervalMs) || DEFAULT_CACHE_CONFIG.intervalMs,
+    );
+    const now = Date.now();
+    if (lastRun && now - lastRun < every) return;
+    lastRun = now;
     try {
       cleanupCache({ paths, config, log });
     } catch (err) {
       log(`[cache] 清理失败：${err.message}`);
     }
   };
-  const timer = setInterval(run, every);
+  // 每分钟检查一次；设置页改间隔后无需重启 Hub。
+  const timer = setInterval(check, 60_000);
   timer.unref?.();
-  const initial = setTimeout(run, 10_000);
+  const initial = setTimeout(check, 10_000);
   initial.unref?.();
   return () => {
     stopped = true;
