@@ -993,7 +993,7 @@ async function loadSettings() {
     $('setLookback').value = cfg.digest?.lookbackHours ?? 12;
     $('setCacheEnabled').checked = cfg.cache?.enabled !== false;
     $('setCacheInterval').value = Math.max(1, Math.round((cfg.cache?.intervalMs ?? 6 * 3600 * 1000) / 3600000));
-    $('setCacheExportHours').value = cfg.cache?.exportRetentionHours ?? 24;
+    $('setCacheExportHours').value = cfg.cache?.exportRetentionHours ?? 6;
     loadCacheStatus();
     const channels = new Set(cfg.delivery?.channels || []);
     document.querySelector('.ch-file').checked = channels.has('file');

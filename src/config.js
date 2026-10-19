@@ -104,9 +104,9 @@ export const DEFAULT_CONFIG = {
     enabled: true,
     // 自动清理间隔：6 小时。
     intervalMs: 6 * 60 * 60 * 1000,
-    // 微信 OCR 临时截图保留 24 小时，并最多保留最近 20 张。
-    exportRetentionHours: 24,
-    exportKeepLatest: 20,
+    // 微信 OCR 临时截图保留 6 小时，并最多保留最近 10 张。
+    exportRetentionHours: 6,
+    exportKeepLatest: 10,
     // 浏览器 Cache/Code Cache/GPUCache 只删 24 小时前的文件。
     browserCacheMaxAgeHours: 24,
   },
