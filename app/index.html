@@ -585,6 +585,21 @@
         </div>
 
         <div class="panel">
+          <h3>缓存清理</h3>
+          <div class="sub">自动清理微信 OCR 截图和浏览器缓存；不会动消息库、报告和登录态。</div>
+          <label class="check" style="margin-top:10px"><input type="checkbox" id="setCacheEnabled"> 自动清理缓存</label>
+          <div class="grid2" style="margin-top:10px">
+            <div class="field"><label>清理间隔（小时）</label><input type="number" id="setCacheInterval" min="1" max="168"></div>
+            <div class="field"><label>截图保留（小时）</label><input type="number" id="setCacheExportHours" min="1" max="720"></div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <button class="btn primary" id="saveCache">保存缓存设置</button>
+            <button class="btn" id="cleanCache">立即清理</button>
+            <span class="muted" id="cacheMsg"></span>
+          </div>
+        </div>
+
+        <div class="panel">
           <h3>关于</h3>
           <div class="sub" id="aboutInfo">—</div>
           <div class="row"><a class="btn" href="/setup?token=" id="classicLink" target="_blank">经典状态页</a><a class="btn" id="reviewLink" target="_blank">待审报告页</a></div>
@@ -621,6 +636,13 @@ function fmtTime(ts, withDate = false) {
   const pad = (n) => String(n).padStart(2, '0');
   const clock = pad(d.getHours()) + ':' + pad(d.getMinutes());
   return withDate ? (d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + clock : clock;
+}
+function fmtBytes(value) {
+  const n = Number(value || 0);
+  if (n < 1024) return n + ' B';
+  if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+  if (n < 1024 * 1024 * 1024) return (n / 1024 / 1024).toFixed(1) + ' MB';
+  return (n / 1024 / 1024 / 1024).toFixed(2) + ' GB';
 }
 function chatIdOf(name) { return 'uia:' + name; }
 
@@ -969,6 +991,10 @@ async function loadSettings() {
     $('setAutoOpen').checked = Boolean(cfg.adapters?.qqUia?.autoOpenUnread);
     $('setSlots').value = (cfg.digest?.slots || []).join(', ');
     $('setLookback').value = cfg.digest?.lookbackHours ?? 12;
+    $('setCacheEnabled').checked = cfg.cache?.enabled !== false;
+    $('setCacheInterval').value = Math.max(1, Math.round((cfg.cache?.intervalMs ?? 6 * 3600 * 1000) / 3600000));
+    $('setCacheExportHours').value = cfg.cache?.exportRetentionHours ?? 24;
+    loadCacheStatus();
     const channels = new Set(cfg.delivery?.channels || []);
     document.querySelector('.ch-file').checked = channels.has('file');
     document.querySelector('.ch-dsh').checked = channels.has('dsh');
@@ -980,6 +1006,18 @@ async function loadSettings() {
     $('classicLink').href = '/setup?token=' + encodeURIComponent(TOKEN);
     $('reviewLink').href = '/app?token=' + encodeURIComponent(TOKEN) + '&page=reports';
   } catch (err) { toast(err.message, true); }
+}
+
+async function loadCacheStatus() {
+  try {
+    const c = await api('/api/cache');
+    const bits = [];
+    bits.push('浏览器缓存 ' + fmtBytes(c.summary?.browserCache?.bytes || 0));
+    bits.push('截图 ' + fmtBytes(c.summary?.exports?.bytes || 0));
+    if (c.lastCleanup) bits.push('上次清理 ' + fmtTime(c.lastCleanup.at, true) + '，释放 ' + fmtBytes(c.lastCleanup.freedBytes));
+    else bits.push('尚未清理');
+    $('cacheMsg').textContent = bits.join(' · ');
+  } catch (err) { $('cacheMsg').textContent = err.message; }
 }
 
 function wechatKey(name) {
@@ -1190,6 +1228,34 @@ $('saveDigest').addEventListener('click', async (e) => {
     $('digestMsg').textContent = '已保存';
     toast('摘要设置已保存');
   } catch (err) { toast(err.message, true); } finally { e.target.disabled = false; }
+});
+
+$('saveCache').addEventListener('click', async (e) => {
+  e.target.disabled = true;
+  try {
+    await api('/api/config', { method: 'POST', body: JSON.stringify({
+      cache: {
+        enabled: $('setCacheEnabled').checked,
+        intervalMs: Math.max(1, Number($('setCacheInterval').value) || 6) * 3600000,
+        exportRetentionHours: Math.max(1, Number($('setCacheExportHours').value) || 24),
+      },
+    }) });
+    $('cacheMsg').textContent = '已保存';
+    toast('缓存设置已保存');
+    await loadCacheStatus();
+  } catch (err) { toast(err.message, true); } finally { e.target.disabled = false; }
+});
+
+$('cleanCache').addEventListener('click', async (e) => {
+  e.target.disabled = true;
+  $('cacheMsg').textContent = '正在清理…';
+  try {
+    const result = await api('/api/cache/clean', { method: 'POST', body: '{}' });
+    $('cacheMsg').textContent = '已清理 ' + result.removedFiles + ' 个文件，释放 ' + fmtBytes(result.freedBytes);
+    toast('缓存已清理');
+    await loadCacheStatus();
+  } catch (err) { toast(err.message, true); $('cacheMsg').textContent = err.message; }
+  finally { e.target.disabled = false; }
 });
 
 $('createReport').addEventListener('click', async (e) => {

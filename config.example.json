@@ -65,6 +65,13 @@
     "defaultDurationMinutes": 60,
     "minConfidence": 0.5
   },
+  "cache": {
+    "enabled": true,
+    "intervalMs": 21600000,
+    "exportRetentionHours": 24,
+    "exportKeepLatest": 20,
+    "browserCacheMaxAgeHours": 24
+  },
   "delivery": {
     "channels": ["file", "dsh"],
     "dsh": {

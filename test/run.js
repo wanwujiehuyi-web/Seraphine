@@ -31,6 +31,7 @@ import { OneBotAdapter } from '../src/adapters/onebot.js';
 import { resolveQqTime } from '../src/adapters/qq-uia.js';
 import { cleanOcr, parseWechatChat, parseWechatMessages, parseWechatSessions } from '../src/adapters/wechat-ocr.js';
 import { buildDigest, renderReport } from '../src/digest.js';
+import { cleanupCache } from '../src/cache.js';
 import { startHub } from '../src/hub.js';
 import { Ingest, normalizeOneBot, normalizeWebhook } from '../src/ingest.js';
 import { Scheduler } from '../src/scheduler.js';
@@ -958,6 +959,42 @@ await test('MCP：initialize / tools/list / tools/call', async () => {
     child.kill();
     rl.close();
   }
+});
+
+await test('缓存：只删过期导出与浏览器缓存，不碰登录态', () => {
+  const dir = tempDir();
+  const base = path.join(dir, 'state');
+  const now = Date.now();
+  const old = new Date(now - 48 * 3600_000);
+  const fresh = new Date(now - 2 * 3600_000);
+  const exportsDir = path.join(base, 'exports');
+  const browserCache = path.join(base, 'browser-profile', 'Default', 'Cache');
+  const browserProtect = path.join(base, 'browser-profile', 'Default', 'Network');
+  for (const d of [exportsDir, browserCache, browserProtect]) fs.mkdirSync(d, { recursive: true });
+  const oldShot = path.join(exportsDir, 'wechat-old.png');
+  const newShot = path.join(exportsDir, 'wechat-new.png');
+  const oldCache = path.join(browserCache, 'data_1');
+  const protectedCookie = path.join(browserProtect, 'Cookies');
+  const protectedStorage = path.join(base, 'browser-profile', 'Default', 'Local Storage', 'state');
+  fs.mkdirSync(path.dirname(protectedStorage), { recursive: true });
+  for (const [file, mtime] of [
+    [oldShot, old], [newShot, fresh], [oldCache, old], [protectedCookie, old], [protectedStorage, old],
+  ]) {
+    fs.writeFileSync(file, 'x');
+    fs.utimesSync(file, mtime, mtime);
+  }
+  const result = cleanupCache({
+    paths: { base },
+    config: { cache: { exportRetentionHours: 24, exportKeepLatest: 20, browserCacheMaxAgeHours: 24 } },
+    nowMs: now,
+  });
+  assert.ok(result.removedFiles >= 2);
+  assert.equal(fs.existsSync(oldShot), false, '旧截图应删除');
+  assert.equal(fs.existsSync(newShot), true, '新截图应保留');
+  assert.equal(fs.existsSync(oldCache), false, '旧浏览器缓存应删除');
+  assert.equal(fs.existsSync(protectedCookie), true, 'Cookies 必须保留');
+  assert.equal(fs.existsSync(protectedStorage), true, 'Local Storage 必须保留');
+  assert.ok(fs.existsSync(path.join(base, 'cache-stats.json')));
 });
 
 // ---------------------------------------------------------------- 结果

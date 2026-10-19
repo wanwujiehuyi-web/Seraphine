@@ -17,6 +17,7 @@ import path from 'node:path';
 import { URL } from 'node:url';
 
 import { PKG_ROOT, saveConfig } from './config.js';
+import { cacheStatus, cleanupCache } from './cache.js';
 import { normalizeOneBot, normalizeWebhook } from './ingest.js';
 import { formatDateTime } from './util/time.js';
 
@@ -216,6 +217,16 @@ export function createHttpServer({ service, config, ingest, log = () => {}, runt
         throw new HttpError(401, '缺少或错误的 token');
       }
 
+      // ------------------------------------------------------------ 缓存
+      if (method === 'GET' && pathname === '/api/cache') {
+        sendJson(res, 200, cacheStatus({ paths, config }));
+        return;
+      }
+      if (method === 'POST' && pathname === '/api/cache/clean') {
+        sendJson(res, 200, cleanupCache({ paths, config, log }));
+        return;
+      }
+
       // ------------------------------------------------------------ 状态
       if (method === 'GET' && pathname === '/api/status') {
         sendJson(res, 200, { ...service.publicStatus(), adapters: runtime() });
@@ -392,6 +403,7 @@ export function createHttpServer({ service, config, ingest, log = () => {}, runt
           },
           digest: config.digest,
           schedule: config.schedule,
+          cache: config.cache,
           delivery: {
             channels: config.delivery.channels,
             qq: { enabled: config.delivery.qq.enabled },
@@ -445,6 +457,19 @@ export function createHttpServer({ service, config, ingest, log = () => {}, runt
         }
         if (body.delivery && Array.isArray(body.delivery.channels)) {
           config.delivery.channels = body.delivery.channels.map(String);
+        }
+        if (body.cache) {
+          const patch = body.cache;
+          if (typeof patch.enabled === 'boolean') config.cache.enabled = patch.enabled;
+          if (Number.isFinite(Number(patch.intervalMs))) {
+            config.cache.intervalMs = Math.max(60_000, Math.min(7 * 24 * 60 * 60 * 1000, Number(patch.intervalMs)));
+          }
+          if (Number.isFinite(Number(patch.exportRetentionHours))) {
+            config.cache.exportRetentionHours = Math.max(1, Math.min(24 * 30, Number(patch.exportRetentionHours)));
+          }
+          if (Number.isFinite(Number(patch.browserCacheMaxAgeHours))) {
+            config.cache.browserCacheMaxAgeHours = Math.max(1, Math.min(24 * 30, Number(patch.browserCacheMaxAgeHours)));
+          }
         }
         // 轮询间隔即时生效，不再要求重启 Hub。
         if (config.adapters.qqUia) qq?.setIntervalMs?.(config.adapters.qqUia.intervalMs);

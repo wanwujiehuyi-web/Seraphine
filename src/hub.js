@@ -13,6 +13,7 @@ import { pathToFileURL } from 'node:url';
 import { OneBotAdapter } from './adapters/onebot.js';
 import { QqUiaAdapter } from './adapters/qq-uia.js';
 import { WechatOcrAdapter } from './adapters/wechat-ocr.js';
+import { startCacheCleaner } from './cache.js';
 import {
   createLogger,
   defaultConfigPath,
@@ -128,6 +129,7 @@ export async function startHub({
   wechatOcr?.start();
 
   if (startScheduler) scheduler.start();
+  const stopCacheCleaner = startCacheCleaner({ paths, config, log });
 
   try {
     fs.writeFileSync(paths.pid, String(process.pid), 'utf8');
@@ -142,6 +144,7 @@ export async function startHub({
     if (closed) return;
     closed = true;
     scheduler.stop();
+    stopCacheCleaner();
     qqUia?.stop();
     wechatOcr?.stop();
     await adapter?.stop();
