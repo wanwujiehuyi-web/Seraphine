@@ -454,6 +454,9 @@ export function createHttpServer({ service, config, ingest, log = () => {}, runt
           if (Array.isArray(body.digest.channels)) {
             config.digest.channels = body.digest.channels.map(String);
           }
+          if (typeof body.digest.autoCreateReport === 'boolean') {
+            config.digest.autoCreateReport = body.digest.autoCreateReport;
+          }
         }
         if (body.delivery && Array.isArray(body.delivery.channels)) {
           config.delivery.channels = body.delivery.channels.map(String);

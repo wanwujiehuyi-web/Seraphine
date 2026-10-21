@@ -574,6 +574,7 @@
             <div class="field"><label>每日摘要时间（逗号分隔）</label><input type="text" id="setSlots" placeholder="09:00, 21:30"></div>
             <div class="field"><label>默认回看小时</label><input type="number" id="setLookback" min="1" max="336"></div>
           </div>
+          <label class="check" style="margin-top:8px"><input type="checkbox" id="setAutoReport"> 到点自动生成待审报告（会消耗 DSH token）</label>
           <div class="sub">投递通道（批准后使用）</div>
           <div class="chips">
             <label class="check"><input type="checkbox" class="ch-file" checked> 文件</label>
@@ -991,6 +992,7 @@ async function loadSettings() {
     $('setAutoOpen').checked = Boolean(cfg.adapters?.qqUia?.autoOpenUnread);
     $('setSlots').value = (cfg.digest?.slots || []).join(', ');
     $('setLookback').value = cfg.digest?.lookbackHours ?? 12;
+    $('setAutoReport').checked = cfg.digest?.autoCreateReport !== false;
     $('setCacheEnabled').checked = cfg.cache?.enabled !== false;
     $('setCacheInterval').value = Math.max(1, Math.round((cfg.cache?.intervalMs ?? 6 * 3600 * 1000) / 3600000));
     $('setCacheExportHours').value = cfg.cache?.exportRetentionHours ?? 6;
@@ -1222,7 +1224,7 @@ $('saveDigest').addEventListener('click', async (e) => {
     if (document.querySelector('.ch-qq').checked) channels.push('qq');
     if (document.querySelector('.ch-wechat').checked) channels.push('wechat');
     await api('/api/config', { method: 'POST', body: JSON.stringify({
-      digest: { slots: $('setSlots').value.split(/[,，]/).map((x) => x.trim()).filter(Boolean), lookbackHours: Number($('setLookback').value) || 12 },
+      digest: { slots: $('setSlots').value.split(/[,，]/).map((x) => x.trim()).filter(Boolean), lookbackHours: Number($('setLookback').value) || 12, autoCreateReport: $('setAutoReport').checked },
       delivery: { channels },
     }) });
     $('digestMsg').textContent = '已保存';

@@ -51,6 +51,8 @@ export class Scheduler {
     this.#running = true;
     try {
       const now = this.#now();
+      // 用户可关闭自动日报；关闭后只保留手动生成，避免定时报告持续占用 token。
+      if (this.#config.digest.autoCreateReport === false) return;
       const results = [];
       for (const slot of this.slots) {
         const result = await this.#maybeRunSlot(slot, now);
